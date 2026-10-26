@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jarvis su misura · il socio operativo per la tua attività</title>
+<meta name="description" content="Un assistente con l'intelligenza artificiale costruito su misura per la tua attività: lavora sui tuoi sistemi, ricorda tutto, e non fa niente senza il tuo sì.">
+<style>
+:root{--bg:#02070d;--fg:#d9eef6;--dim:#7d98a6;--acc:#5cd6ff;--acc2:#ffb347;--line:rgba(92,214,255,.18)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+body{background:var(--bg);color:var(--fg);font:400 17px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;overflow-x:hidden}
+#scena{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block}
+.velo{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 35%,rgba(2,7,13,.75) 100%)}
+header{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:20px 5vw;backdrop-filter:blur(6px);background:linear-gradient(to bottom,rgba(2,7,13,.8),transparent)}
+.marchio{font:600 15px/1 "SF Mono",Menlo,monospace;letter-spacing:.35em;color:var(--acc)}
+.marchio b{color:var(--fg);font-weight:600}
+.btn{display:inline-block;padding:14px 28px;border:1px solid var(--acc);color:var(--bg);background:var(--acc);border-radius:999px;font-weight:600;text-decoration:none;letter-spacing:.02em;transition:.25s}
+.btn:hover{background:transparent;color:var(--acc);box-shadow:0 0 30px rgba(92,214,255,.35)}
+.btn.vuoto{background:transparent;color:var(--acc)}
+.btn.piccolo{padding:9px 18px;font-size:14px}
+main{position:relative;z-index:2}
+section{min-height:130vh;display:flex;align-items:center;padding:0 7vw}
+section.centro{justify-content:center;text-align:center}
+section.destra{justify-content:flex-end}
+.blocco{max-width:600px}
+.centro .blocco{max-width:820px}
+.eti{font:500 12px/1 "SF Mono",Menlo,monospace;letter-spacing:.3em;color:var(--acc);text-transform:uppercase;margin-bottom:22px;display:block}
+h1{font-size:clamp(46px,8vw,110px);line-height:.98;font-weight:700;letter-spacing:-.03em}
+h1 em,h2 em{font-style:normal;color:var(--acc);text-shadow:0 0 40px rgba(92,214,255,.45)}
+h2{font-size:clamp(34px,5vw,64px);line-height:1.05;font-weight:700;letter-spacing:-.02em;margin-bottom:24px}
+p.lead{font-size:clamp(18px,1.6vw,22px);color:var(--fg);opacity:.85;margin:26px 0 36px}
+p{color:var(--dim)}
+.riquadri{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:34px;text-align:left}
+.riq{border:1px solid var(--line);border-radius:18px;padding:26px;background:rgba(4,16,26,.62);backdrop-filter:blur(10px)}
+.riq h3{font-size:19px;margin-bottom:8px;color:var(--fg)}
+.riq .n{font:600 13px/1 "SF Mono",Menlo,monospace;color:var(--acc);margin-bottom:16px;display:block}
+.riq p{font-size:15px}
+.regole{list-style:none;margin-top:30px}
+.regole li{padding:18px 0 18px 44px;border-top:1px solid var(--line);position:relative;color:var(--fg)}
+.regole li span{display:block;color:var(--dim);font-size:15px}
+.regole li:before{content:"";position:absolute;left:6px;top:24px;width:14px;height:14px;border:2px solid var(--acc);border-radius:50%;box-shadow:0 0 12px var(--acc)}
+.passi{counter-reset:p;margin-top:30px;display:grid;gap:14px}
+.passo{display:flex;gap:22px;align-items:flex-start;border:1px solid var(--line);border-radius:16px;padding:20px 24px;background:rgba(4,16,26,.6);backdrop-filter:blur(8px)}
+.passo b{font:600 26px/1 "SF Mono",Menlo,monospace;color:var(--acc);min-width:44px}
+.passo h3{font-size:18px;color:var(--fg);margin-bottom:4px}
+.passo p{font-size:15px}
+.nota{font-size:14px;color:var(--dim);margin-top:26px}
+footer{position:relative;z-index:2;padding:50px 7vw;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;flex-wrap:wrap;gap:12px 30px;justify-content:space-between;background:rgba(2,7,13,.85)}
+.rivela{opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s cubic-bezier(.2,.7,.2,1)}
+.rivela.si{opacity:1;transform:none}
+.barra{position:fixed;left:0;top:0;height:2px;background:var(--acc);box-shadow:0 0 12px var(--acc);z-index:6;width:0}
+.scorri{position:absolute;bottom:6vh;left:50%;transform:translateX(-50%);font:500 11px/1 "SF Mono",Menlo,monospace;letter-spacing:.3em;color:var(--dim)}
+@media (max-width:760px){section{padding:0 6vw;min-height:115vh}section.destra{justify-content:flex-start}header{padding:16px 6vw}}
+@media (prefers-reduced-motion:reduce){.rivela{transition:none;opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="scena" aria-hidden="true"></canvas>
+<div class="velo"></div>
+<div class="barra" id="barra"></div>
+
+<header>
+  <div class="marchio">J.A.R.V.I.S. <b>su misura</b></div>
+  <a class="btn piccolo" href="https://forms.gle/PKX295BgkkauCkK89" target="_blank" rel="noopener">Richiedi informazioni</a>
+</header>
+
+<main>
+  <section class="centro" id="s0">
+    <div class="blocco rivela">
+      <span class="eti">Assistente IA costruito per la tua attività</span>
+      <h1>Non un chatbot.<br><em>Un socio che lavora.</em></h1>
+      <p class="lead">Jarvis legge la posta, prepara le risposte, tiene l'agenda, fa le ricerche e ricorda tutto della tua attività. E non fa niente senza il tuo sì.</p>
+      <a class="btn" href="https://forms.gle/PKX295BgkkauCkK89" target="_blank" rel="noopener">Voglio il mio Jarvis</a>
+    </div>
+    <div class="scorri">SCORRI</div>
+  </section>
+
+  <section id="s1">
+    <div class="blocco rivela">
+      <span class="eti">Il problema</span>
+      <h2>Le giornate se le mangia <em>il lavoro di contorno.</em></h2>
+      <p>Mail da smistare, messaggi a cui rispondere, preventivi da rifare, appuntamenti da incastrare, informazioni sparse in dieci posti. Tutto necessario, niente che faccia crescere l'attività.</p>
+    </div>
+  </section>
+
+  <section class="destra" id="s2">
+    <div class="blocco rivela">
+      <span class="eti">Perché è diverso</span>
+      <h2>Tre cose costruite <em>attorno all'intelligenza.</em></h2>
+      <div class="riquadri">
+        <div class="riq"><span class="n">01 · MANI</span><h3>Lavora sui tuoi sistemi</h3><p>Collegato a posta, file, browser e app: consegna lavoro finito, non consigli.</p></div>
+        <div class="riq"><span class="n">02 · MEMORIA</span><h3>Ricorda tutto</h3><p>Clienti, decisioni, regole della tua attività: niente da rispiegare ogni volta.</p></div>
+        <div class="riq"><span class="n">03 · STRUTTURA</span><h3>Una squadra dietro</h3><p>Specialisti per ricerche, testi, analisi e controllo, coordinati da lui.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="centro" id="s3">
+    <div class="blocco rivela">
+      <span class="eti">Cosa può fare per te</span>
+      <h2>Disegnato sul <em>tuo</em> modo di lavorare.</h2>
+      <div class="riquadri">
+        <div class="riq"><h3>Posta in ordine</h3><p>Smista le mail, riassume quelle importanti e prepara le bozze di risposta.</p></div>
+        <div class="riq"><h3>Preventivi e documenti</h3><p>Dal tuo listino a un documento pronto da rivedere.</p></div>
+        <div class="riq"><h3>Messaggi</h3><p>Bozze di risposta per WhatsApp nel tuo stile: l'invio lo decidi tu.</p></div>
+        <div class="riq"><h3>Ricerche con le fonti</h3><p>Concorrenti, fornitori, normative: risposte verificate e datate.</p></div>
+        <div class="riq"><h3>Contenuti social</h3><p>Bozze di post con la voce del tuo marchio, da approvare una per una.</p></div>
+        <div class="riq"><h3>A voce e sul telefono</h3><p>Gli parli dal Mac o dall'iPhone, come a un collaboratore.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="destra" id="s3b">
+    <div class="blocco rivela">
+      <span class="eti">Il progetto completo · sul Mac</span>
+      <h2>Una postazione <em>che ti risponde.</em></h2>
+      <div class="riquadri">
+        <div class="riq"><h3>Voce</h3><p>Gli parli e risponde a voce, in italiano, mentre lavora.</p></div>
+        <div class="riq"><h3>Occhi e mani</h3><p>Vede lo schermo, apre le app, clicca e scrive come una persona, e si ferma prima di ogni azione importante.</p></div>
+        <div class="riq"><h3>Cruscotto e galassia</h3><p>Una plancia di comando con note, squadra e strumenti in forma di galassia 3D.</p></div>
+        <div class="riq"><h3>Lavagna e ologrammi</h3><p>Note e modelli 3D da spostare con le mani davanti alla webcam.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s3c">
+    <div class="blocco rivela">
+      <span class="eti">Il progetto completo · in tasca</span>
+      <h2>Ti segue <em>anche fuori.</em></h2>
+      <div class="riquadri">
+        <div class="riq"><h3>App sull'iPhone</h3><p>Lo stesso Jarvis, a voce, ovunque tu sia.</p></div>
+        <div class="riq"><h3>Occhi della fotocamera</h3><p>Inquadri un oggetto e ti dice cos'è; si ricorda anche dove l'hai lasciato.</p></div>
+        <div class="riq"><h3>Messaggi, navigatore, agenda</h3><p>Apre la chat col testo già scritto, avvia il navigatore, legge calendario e promemoria.</p></div>
+        <div class="riq"><h3>Permessi a distanza</h3><p>Fuori casa, se il Mac chiede un permesso, te lo chiede sul telefono e aspetta il tuo sì.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="centro" id="s3d">
+    <div class="blocco rivela">
+      <span class="eti">Il progetto completo · la squadra</span>
+      <h2>Più di cento specialisti, <em>un solo capo squadra.</em></h2>
+      <p class="lead">Dietro Jarvis lavorano 107 agenti in 17 reparti. Tu parli con uno, lavorano in tanti.</p>
+      <div class="riquadri">
+        <div class="riq"><h3>Affari</h3><p>Vendite, marketing, pubblicità, posizionamento sui motori di ricerca e sulle IA.</p></div>
+        <div class="riq"><h3>Documenti e numeri</h3><p>Lettura di contratti, finanza personale, immobili, selezione del personale.</p></div>
+        <div class="riq"><h3>Tecnica</h3><p>Sviluppo, revisione del codice, sicurezza del computer.</p></div>
+        <div class="riq"><h3>Contenuti</h3><p>Post, caroselli, video montati e siti 3D come questo.</p></div>
+      </div>
+      <p class="nota">Analisi e bozze: le decisioni importanti restano a te e ai professionisti che ti seguono.</p>
+    </div>
+  </section>
+
+  <section class="destra" id="s3e">
+    <div class="blocco rivela">
+      <span class="eti">Il progetto completo · sempre acceso</span>
+      <h2>Si controlla <em>da solo.</em></h2>
+      <div class="riquadri">
+        <div class="riq"><h3>Il guardiano</h3><p>All'accensione avvia tutto e, se qualcosa si blocca, lo riavvia.</p></div>
+        <div class="riq"><h3>Il collaudo</h3><p>Un controllo completo del sistema che dice cosa funziona e cosa no, senza giri di parole.</p></div>
+        <div class="riq"><h3>Memoria ordinata</h3><p>Un archivio di note con indici e collegamenti: trova subito quello che serve.</p></div>
+        <div class="riq"><h3>Impara dagli errori</h3><p>Ogni sbaglio diventa una lezione scritta, per non ripeterlo.</p></div>
+      </div>
+      <p class="nota">Il tuo Jarvis prende solo i pezzi che servono alla tua attività.</p>
+    </div>
+  </section>
+
+  <section id="s4">
+    <div class="blocco rivela">
+      <span class="eti">Le regole, scritte</span>
+      <h2>Il controllo <em>resta a te.</em></h2>
+      <ul class="regole">
+        <li>Niente parte senza il tuo sì<span>Mail, messaggi, pubblicazioni, acquisti: prepara tutto, decidi tu.</span></li>
+        <li>I tuoi dati restano tuoi<span>Lavora sul tuo computer, con la memoria della tua attività.</span></li>
+        <li>L'account dell'intelligenza è intestato a te<span>Usi un tuo piano adatto all'uso professionale. Io fatturo solo il mio lavoro.</span></li>
+        <li>Le tue password non le tengo io<span>Gli accessi li inserisci tu, sempre.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="destra" id="s5">
+    <div class="blocco rivela">
+      <span class="eti">Come funziona</span>
+      <h2>Da una chiacchierata <em>a un socio in funzione.</em></h2>
+      <div class="passi">
+        <div class="passo"><b>01</b><div><h3>Ci conosciamo</h3><p>Mi racconti la tua attività e dove perdi tempo.</p></div></div>
+        <div class="passo"><b>02</b><div><h3>Lo progetto su misura</h3><p>Scegliamo insieme cosa deve fare e con quali regole.</p></div></div>
+        <div class="passo"><b>03</b><div><h3>Lo installo e lo provo</h3><p>Sul tuo computer, collegato ai tuoi strumenti, provato davanti a te.</p></div></div>
+        <div class="passo"><b>04</b><div><h3>Lo seguo nel tempo</h3><p>Manutenzione e miglioramenti, perché cresca con la tua attività.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="centro" id="s6">
+    <div class="blocco rivela">
+      <span class="eti">Parliamone</span>
+      <h2>Il tuo Jarvis <em>ti aspetta.</em></h2>
+      <p class="lead">Ogni progetto è su misura, quindi anche il preventivo: lo ricevi in privato, dopo una prima chiacchierata senza impegno.</p>
+      <a class="btn" href="https://forms.gle/PKX295BgkkauCkK89" target="_blank" rel="noopener">Lascia nome e telefono</a>
+      <p class="nota">Ti ricontatto io, in privato.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Jarvis su misura · progetto di Manuel</span>
+  <span>Questo sito non usa cookie e non raccoglie dati</span>
+  <span>Sito e assistente costruiti con l'intelligenza artificiale</span>
+</footer>
+
+<script type="module">
+import * as THREE from './vendor/three.module.js';
+
+const canvas = document.getElementById('scena');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x02070d, 1);
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x02070d, 0.045);
+const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
+
+// Sei forme, una per sezione: il nucleo si trasforma mentre scorri
+const N = innerWidth < 760 ? 9000 : 18000;
+const forme = [new Float32Array(N*3), new Float32Array(N*3), new Float32Array(N*3),
+               new Float32Array(N*3), new Float32Array(N*3), new Float32Array(N*3), new Float32Array(N*3)];
+const caso = new Float32Array(N);
+const rnd = (a,b)=>a+Math.random()*(b-a);
+for (let i=0;i<N;i++){
+  caso[i]=Math.random();
+  const k=i*3;
+  // 0 nucleo: sfera con anelli equatoriali
+  let u=Math.random()*2-1, t=Math.random()*Math.PI*2, r=2*Math.cbrt(Math.random()*.15+.85);
+  if (i%5===0){ const rr=2.7+(i%3)*.35; forme[0].set([Math.cos(t)*rr, rnd(-.03,.03), Math.sin(t)*rr],k); }
+  else forme[0].set([Math.sqrt(1-u*u)*Math.cos(t)*r, u*r, Math.sqrt(1-u*u)*Math.sin(t)*r],k);
+  // 1 caos: nube dispersa
+  forme[1].set([rnd(-9,9), rnd(-5,5), rnd(-7,4)],k);
+  // 2 tre sfere: mani, memoria, struttura
+  const g=i%3, cx=(g-1)*3.2; u=Math.random()*2-1; t=Math.random()*Math.PI*2; r=1.05*Math.cbrt(Math.random());
+  forme[2].set([cx+Math.sqrt(1-u*u)*Math.cos(t)*r*1.1, u*r*1.1, Math.sqrt(1-u*u)*Math.sin(t)*r*1.1],k);
+  // 3 galassia a spirale: tanti compiti attorno al centro
+  const br=i%4, d=Math.pow(Math.random(),1.6)*6.5, a=br*Math.PI/2 + d*.75 + rnd(-.25,.25);
+  forme[3].set([Math.cos(a)*d, rnd(-.18,.18)*(1+(6.5-d)*.15), Math.sin(a)*d],k);
+  // 4 scudo: cupola protettiva con nucleo dentro
+  if (i%4===0){ u=Math.random()*2-1; t=Math.random()*Math.PI*2; r=.7; forme[4].set([Math.sqrt(1-u*u)*Math.cos(t)*r,u*r,Math.sqrt(1-u*u)*Math.sin(t)*r],k); }
+  else { u=Math.random(); t=Math.random()*Math.PI*2; r=3.2; forme[4].set([Math.sqrt(1-u*u)*Math.cos(t)*r, u*r-0.6, Math.sqrt(1-u*u)*Math.sin(t)*r],k); }
+  // 5 percorso a quattro tappe
+  const tp=i%4, x0=-4.5+tp*3; t=Math.random()*Math.PI*2; r=.55+Math.random()*.08;
+  if (i%6===0){ const s=Math.random()*9-4.5; forme[5].set([s, Math.sin(s*1.3)*.25, 0],k); }
+  else forme[5].set([x0+Math.cos(t)*r, Math.sin(t)*r + Math.sin(x0*1.3)*.25, rnd(-.12,.12)],k);
+  // 6 il nucleo torna, più grande e luminoso
+  u=Math.random()*2-1; t=Math.random()*Math.PI*2; r=2.4*Math.pow(Math.random(),.25);
+  forme[6].set([Math.sqrt(1-u*u)*Math.cos(t)*r, u*r, Math.sqrt(1-u*u)*Math.sin(t)*r],k);
+}
+
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(forme[0].slice(),3));
+geo.setAttribute('caso', new THREE.BufferAttribute(caso,1));
+const tex = (()=>{ const c=document.createElement('canvas'); c.width=c.height=64; const x=c.getContext('2d');
+  const gr=x.createRadialGradient(32,32,0,32,32,32); gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(.25,'rgba(180,240,255,.9)'); gr.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=gr; x.fillRect(0,0,64,64); return new THREE.CanvasTexture(c); })();
+const mat = new THREE.ShaderMaterial({
+  transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
+  uniforms:{ uT:{value:0}, uTex:{value:tex}, uPx:{value:renderer.getPixelRatio()}, uCaldo:{value:0} },
+  vertexShader:`attribute float caso; uniform float uT; uniform float uPx; varying float vC;
+    void main(){ vec3 p=position; p+=0.04*vec3(sin(uT*.9+caso*40.),cos(uT*.7+caso*31.),sin(uT*.8+caso*17.));
+      vec4 mv=modelViewMatrix*vec4(p,1.); gl_Position=projectionMatrix*mv; vC=caso;
+      gl_PointSize=(18.+caso*26.)*uPx/-mv.z; }`,
+  fragmentShader:`uniform sampler2D uTex; uniform float uCaldo; varying float vC;
+    void main(){ vec4 t=texture2D(uTex,gl_PointCoord); vec3 fredd=mix(vec3(.36,.84,1.),vec3(.75,.95,1.),vC);
+      vec3 c=mix(fredd, vec3(1.,.7,.28), uCaldo*step(.86,vC)); gl_FragColor=vec4(c,t.a*.55); }`
+});
+const punti = new THREE.Points(geo, mat);
+scene.add(punti);
+
+// Anello HUD sottile
+const anello = new THREE.Mesh(new THREE.TorusGeometry(3.6,.006,8,200), new THREE.MeshBasicMaterial({color:0x5cd6ff, transparent:true, opacity:.35}));
+anello.rotation.x = Math.PI/2.2; scene.add(anello);
+
+function misura(){ const w=innerWidth,h=innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h;
+  camera.fov = w<760 ? 72 : 55; camera.updateProjectionMatrix(); }
+addEventListener('resize', misura); misura();
+
+// Avanzamento: da 0 a 6 seguendo le sezioni
+const sezioni = [...document.querySelectorAll('main section')];
+function stadio(){ const mezzo=innerHeight*.5;
+  for (let i=0;i<sezioni.length-1;i++){ const a=sezioni[i].offsetTop+sezioni[i].offsetHeight*.5, b=sezioni[i+1].offsetTop+sezioni[i+1].offsetHeight*.5, y=scrollY+mezzo;
+    if (y<b) return i + Math.min(Math.max((y-a)/(b-a),0),1); }
+  return sezioni.length-1; }
+const camere = [[0,0,8.5],[0,.5,10],[0,1.2,9.5],[0,5.5,8],[0,1.5,9.5],[0,.3,8.5],[0,0,7]];
+const ease = x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+let sMorbido = stadio()*6/(sezioni.length-1), ultimo = -1;
+const pos = geo.attributes.position.array;
+const ridotto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const barra = document.getElementById('barra');
+
+const prova = new URLSearchParams(location.search).get('stadio'); // solo per le foto di collaudo
+function frame(tms){
+  const t=tms/1000, s = prova!==null ? +prova : stadio()*6/(sezioni.length-1);
+  sMorbido += (s - sMorbido) * (ridotto ? 1 : .07);
+  const i0=Math.floor(sMorbido), i1=Math.min(i0+1,6), f=ease(sMorbido-i0);
+  if (Math.abs(sMorbido-ultimo)>1e-4){
+    const A=forme[i0], B=forme[i1];
+    for (let j=0;j<N;j++){ // ritardo per punto: la trasformazione si propaga, non scatta
+      const ff=Math.min(Math.max((f*1.4 - caso[j]*.4),0),1), k=j*3;
+      pos[k]=A[k]+(B[k]-A[k])*ff; pos[k+1]=A[k+1]+(B[k+1]-A[k+1])*ff; pos[k+2]=A[k+2]+(B[k+2]-A[k+2])*ff; }
+    geo.attributes.position.needsUpdate=true; ultimo=sMorbido;
+  }
+  const c0=camere[i0], c1=camere[i1];
+  camera.position.set(c0[0]+(c1[0]-c0[0])*f + Math.sin(t*.2)*.3, c0[1]+(c1[1]-c0[1])*f, c0[2]+(c1[2]-c0[2])*f);
+  camera.lookAt(0,0,0);
+  punti.rotation.y = t*.06 + sMorbido*.6;
+  anello.rotation.z = t*.1; anello.material.opacity = .35*Math.max(0,1-Math.abs(sMorbido-0)*1.2) + .35*Math.max(0,1-Math.abs(sMorbido-6)*1.2);
+  mat.uniforms.uT.value=t; mat.uniforms.uCaldo.value=Math.max(0,1-Math.abs(sMorbido-6));
+  barra.style.width = (100*scrollY/(document.body.scrollHeight-innerHeight))+'%';
+  renderer.render(scene,camera); requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// Testi che compaiono entrando nello schermo
+const oss = new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('si', e.isIntersecting)), {threshold:.25});
+document.querySelectorAll('.rivela').forEach(el=>oss.observe(el));
+</script>
+</body>
+</html>

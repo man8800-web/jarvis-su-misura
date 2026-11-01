@@ -18,7 +18,7 @@ window.JARVIS_CONFIG = {
   datiSocieta: '',
 
   // Numero WhatsApp con prefisso, solo cifre (es. 39333xxxxxxx). Vuoto: il pulsante non compare.
-  whatsappNumero: '',
+  whatsappNumero: '393312145105',
 
   // Versione dell'informativa, salvata accanto alla richiesta come prova del consenso.
   versioneInformativa: '2026-11-01',

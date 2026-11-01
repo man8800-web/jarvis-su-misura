@@ -8,7 +8,7 @@ window.JARVIS_CONFIG = {
   // Indirizzo del web app di Google Apps Script (finisce con /exec).
   // Lasciato vuoto: il modulo mostra un avviso onesto e NON finge di inviare.
   // Istruzioni: apps-script/LEGGIMI.md
-  moduloUrl: '',
+  moduloUrl: 'https://script.google.com/macros/s/AKfycby7Sak-OXZ2rYtWixW0rE0AU78hICXrhB_2EOqwahcoCjXUsJSYe7peFChgRgxAj16ClQ/exec',
 
   // Email del titolare, mostrata nell'informativa e nella pagina privacy.
   // Vuota: resta visibile il segnaposto [EMAIL DEL TITOLARE DA INSERIRE].

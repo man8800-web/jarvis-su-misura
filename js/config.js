@@ -27,7 +27,7 @@ window.JARVIS_CONFIG = {
   // null = non c'è ancora: il sito mostra lo spazio d'attesa e non cerca file inesistenti.
   media: {
     video: null,      // video di apertura (senza foto di persone)
-    voce: null,       // campione della voce di Jarvis (mp3)
+    voce: 'media/voce-demo.mp3',       // campione della voce di Jarvis (mp3)
     commento: null    // commento a voce per la modalità galassia (mp3)
   }
 };

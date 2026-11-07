@@ -50,6 +50,45 @@
   /* ---------- testata, barra di avanzamento, scia della giornata ---------- */
   var testata = $('#testata'), barra = $('#barra'), linea = $('#linea');
   var inAttesa = false;
+  /* telefono: scorrendo verso il basso la barra dei comandi e WhatsApp scendono via, risalendo tornano */
+  var ultimaY = window.scrollY || 0, versoGiu = 0;
+  function barraGiu(y, max) {
+    var dy = y - ultimaY; ultimaY = y;
+    var aperta = document.querySelector('.comando[aria-pressed="true"]') || document.body.classList.contains('esplora');
+    if (aperta || y < 120 || max - y < 80) { versoGiu = 0; return false; }
+    if (dy > 0) versoGiu += dy; else if (dy < 0) versoGiu = Math.min(versoGiu, 0) + dy;
+    if (versoGiu > 14) return true;
+    if (versoGiu < -10) return false;
+    return document.body.classList.contains('scorre-giu');
+  }
+  /* menu in alto: la voce della sezione in cui sei si accende e, se il menu scorre, si porta intera in vista */
+  var vociMenu = $$('.menu a').map(function (a) { return { a: a, s: $(a.getAttribute('href')) }; }).filter(function (v) { return v.s; });
+  var menuUl = $('.menu'), menuToccato = 0, vocePrima = null;
+  // mentre il dito fa scorrere il menu non lo si sposta; il tocco su una voce invece la porta intera in vista
+  if (menuUl) {
+    menuUl.addEventListener('pointerdown', function () { menuToccato = Date.now(); }, { passive: true });
+    menuUl.addEventListener('click', function (e) {
+      menuToccato = 0;
+      var a = e.target.closest && e.target.closest('a'); if (!a) return;
+      var ru = menuUl.getBoundingClientRect(), ra = a.getBoundingClientRect();
+      if (ra.left < ru.left + 16 || ra.right > ru.right - 26) menuUl.scrollTo({ left: menuUl.scrollLeft + ra.left - ru.left - 18, behavior: ridotto ? 'auto' : 'smooth' });
+    });
+  }
+  // sul computer la sfumatura ai bordi compare solo quando le voci non ci stanno tutte
+  function misuraMenu() { if (menuUl) menuUl.classList.toggle('trabocca', menuUl.scrollWidth > menuUl.clientWidth + 1); }
+  misuraMenu(); addEventListener('resize', misuraMenu, { passive: true }); addEventListener('load', misuraMenu);
+  function aggiornaMenu() {
+    var att = null;
+    vociMenu.forEach(function (v) { if (v.s.getBoundingClientRect().top <= innerHeight * .35) att = v; });
+    if (att === vocePrima) return;
+    if (vocePrima) vocePrima.a.removeAttribute('aria-current');
+    vocePrima = att;
+    if (!att) return;
+    att.a.setAttribute('aria-current', 'true');
+    if (!menuUl || menuUl.scrollWidth <= menuUl.clientWidth || Date.now() - menuToccato < 1500) return;
+    var ru = menuUl.getBoundingClientRect(), ra = att.a.getBoundingClientRect();
+    if (ra.left < ru.left + 16 || ra.right > ru.right - 26) menuUl.scrollTo({ left: menuUl.scrollLeft + ra.left - ru.left - 18, behavior: ridotto ? 'auto' : 'smooth' });
+  }
   function aggiornaScroll() {
     inAttesa = false;
     var y = window.scrollY || 0;
@@ -57,6 +96,8 @@
     if (barra) barra.style.transform = 'scaleX(' + (max > 0 ? clamp(y / max, 0, 1) : 0) + ')';
     if (testata) testata.classList.toggle('piena', y > 40);
     document.body.classList.toggle('in-cima', y < 120);
+    document.body.classList.toggle('scorre-giu', barraGiu(y, max));
+    aggiornaMenu();
     if (linea) {
       var r = linea.getBoundingClientRect();
       linea.style.setProperty('--p', clamp((innerHeight * .65 - r.top) / Math.max(r.height, 1), 0, 1).toFixed(3));

@@ -96,15 +96,17 @@
     if (k === ultimoProfilo && !temaServizio) return;
     var primo = ultimoProfilo === null; ultimoProfilo = k;
     if (primo && k === 'tutti') return;                     // all'apertura la pagina resta com'è scritta
-    decodifica(h1Riga, TITOLI[k] || H1_ORIG);
+    // durante la demo guidata titolo e stato parlano del mestiere scelto (il B&B usa il profilo «famiglia» per la forma)
+    var inDemo = demo && demo.m.profilo === k, nome = inDemo ? demo.m.etichetta : p.nome;
+    decodifica(h1Riga, (inDemo && TITOLI_DEMO[demo.k]) || TITOLI[k] || H1_ORIG);
     if (statoSis) {
       var i = $('i', statoSis); statoSis.textContent = ''; if (i) statoSis.appendChild(i);
-      statoSis.appendChild(document.createTextNode(k === 'tutti' ? STATO_ORIG : 'Progettato intorno a te · ' + p.nome));
+      statoSis.appendChild(document.createTextNode(k === 'tutti' ? STATO_ORIG : 'Progettato intorno a te · ' + nome));
     }
     document.documentElement.style.setProperty('--vivo', p.colore);
     var ord = (SERVIZI[k] || SERVIZI.tutti).slice();
     if (temaServizio) { ord.splice(ord.indexOf(temaServizio), 1); ord.unshift(temaServizio); }
-    riordinaServizi(ord, k === 'tutti' && !temaServizio ? [] : ord.slice(0, 2), temaServizio ? 'Quello che hai chiesto' : 'Utile per: ' + p.nome);
+    riordinaServizi(ord, k === 'tutti' && !temaServizio ? [] : ord.slice(0, 2), temaServizio ? 'Quello che hai chiesto' : 'Utile per: ' + nome);
     segnaRicomposte(['trasforma', 'giornata', 'squadra', 'servizi']);
     temaServizio = null;                                     // vale solo per la richiesta che l'ha portato
   });
@@ -195,7 +197,11 @@
   }
 
   function rispondi(q) {
+    if (demo) { chiediDemo(q, null, true); return; }         // dentro la demo risponde la conversazione preparata
     var c = capisci(q), P = profili(), blocchi = [], ricomposto = [];
+    // un mestiere della demo senza nient'altro da dire (per esempio «gestisco un B&B»): parte la demo di quel mestiere
+    var dm = mestiereDemo(q.toLowerCase(), c.profilo);
+    if (dm && c.profilo === 'tutti' && !c.argomenti.length) { avviaDemo(dm, q, true); return; }
     var srv = c.argomenti.filter(function (a) { return a.servizio; })[0];
     temaServizio = srv ? srv.servizio : null;
 
@@ -226,6 +232,8 @@
     // un'azione per scrivere a Manuel c'è sempre, con la frase del visitatore come argomento
     var haScrivi = blocchi.some(function (b) { return (b.azioni || []).some(function (a) { return a.vai === '#scrivi'; }); });
     if (!haScrivi && c.profilo !== 'tutti') blocchi[0].azioni.push(vai('#scrivi', 'Parliamone', { tema: 'Il mio Jarvis su misura', frase: q }));
+    // chi nomina un mestiere della demo può provarla subito, nei panni del cliente
+    if (dm) blocchi[0].azioni = (blocchi[0].azioni || []).concat([{ etichetta: 'Prova la demo: ' + DEMO.mestieri[dm].etichetta.toLowerCase(), demo: dm }]);
 
     if (c.profilo !== 'tutti' && window.Sito) window.Sito.scegliProfilo(c.profilo, false);
     else if (srv) {
@@ -294,6 +302,11 @@
 
   function pulsante(a) {
     var b;
+    if (a.demo) {
+      b = el('button', 'btn vuoto piccolo', a.etichetta); b.type = 'button';
+      b.addEventListener('click', function () { avviaDemo(a.demo, null, true); });
+      return b;
+    }
     // Nel modulo l'argomento è sempre un'etichetta fissa: la frase del visitatore va solo nel campo della richiesta,
     // a vista e modificabile, così non parte mai niente che lui non veda (modulo.js invia l'argomento a parte).
     if (a.vai === '#scrivi') { b = el('a', 'btn oro piccolo', a.etichetta); b.href = '#scrivi'; b.setAttribute('data-tema', String(a.tema || 'Una domanda fatta a Jarvis').slice(0, 110)); }
@@ -312,6 +325,309 @@
       if (f) { if (!f.hasAttribute('tabindex') && !/^(INPUT|SUMMARY)$/.test(f.tagName)) f.setAttribute('tabindex', '-1'); setTimeout(function () { f.focus({ preventScroll: true }); }, ridotto ? 0 : 650); }
     });
     return b;
+  }
+
+  /* ---------- demo guidata: il visitatore fa il cliente, Jarvis l'assistente di un'attività di fantasia ---------- */
+  // Conversazioni preparate in demo-dati.js: niente rete, niente archivio, niente intelligenza artificiale.
+  // Le date degli orari si calcolano sul momento dal giorno del visitatore; non si chiede e non parte niente.
+  var DEMO = window.DEMO && window.DEMO.mestieri ? window.DEMO : null, T = DEMO ? DEMO.testi : {};
+  var demo = null;                                          // { k, m, chat, domande, salto }
+  var TITOLI_DEMO = { bnb: 'Jarvis, per il tuo B&B.' };
+  var etichetta = $('.vivo-etichetta', form), ETICHETTA_ORIG = etichetta ? etichetta.lastChild.textContent : '';
+  var SEGNAPOSTO_ORIG = inp.placeholder, chips = [];
+  var corsa = null;                                          // la scrittura progressiva in corso
+
+  function mestiereDemo(t, profilo) {
+    if (!DEMO) return null;
+    var c = DEMO.ordine.filter(function (k) { return DEMO.mestieri[k].riconosci.test(t); });
+    return c.filter(function (k) { return DEMO.mestieri[k].profilo === profilo; })[0] || c[0] || null;
+  }
+  function cercaScambio(m, t) {
+    var s = m.scambi.map(function (x, i) { return [x, i]; })
+      .sort(function (a, b) { return ((b[0].priorita || 0) - (a[0].priorita || 0)) || a[1] - b[1]; });
+    var h = s.filter(function (x) { return x[0].re.test(t); })[0];
+    return h ? h[0] : null;
+  }
+  function riempi(s, o) { return String(s).split('{giorno}').join(o.giorno).split('{ora}').join(o.ora); }
+  // «va a il titolare» → «va al titolare»
+  function aChi(chi) {
+    var m = String(chi).match(/^(il |lo |la |l'|i |gli |le )(.*)$/);
+    var P = { 'il ': 'al ', 'lo ': 'allo ', 'la ': 'alla ', "l'": "all'", 'i ': 'ai ', 'gli ': 'agli ', 'le ': 'alle ' };
+    var r = m ? P[m[1]] + m[2] : 'a ' + chi;
+    // anche dopo «e» e «o»: «al 112 e al tecnico», «alla segreteria e alla dottoressa»
+    return r.replace(/ (e|o) (il |lo |la |l'|i |gli |le )/g, function (x, c, art) { return ' ' + c + ' ' + P[art]; });
+  }
+  function quando(o) { return o.giorno + ', ' + (o.ora.indexOf('–') >= 0 ? 'fascia ' : 'ore ') + o.ora; }
+  function durata(n) {
+    if (!n) return '';
+    var h = Math.floor(n / 60), r = n % 60;
+    return (h ? (h === 1 ? '1 ora' : h + ' ore') : '') + (h && r ? ' e ' : '') + (r ? r + ' minuti' : '');
+  }
+  // tre orari a partire da domani, solo nei giorni d'apertura: uno per giorno, o tre nello stesso giorno se il servizio ha un giorno solo
+  function orari(m, p, salto) {
+    var giorni = p.giorni || m.orari.giorni, fasce = p.fasce || m.orari.fasce, perGiorno = giorni.length <= 2 ? 3 : 1;
+    var r = [], validi = 0, base = new Date(); base.setHours(12, 0, 0, 0);
+    for (var n = 1; n < 200 && r.length < 3; n++) {
+      var d = new Date(base.getTime()); d.setDate(base.getDate() + n);
+      if (giorni.indexOf(d.getDay()) < 0) continue;
+      if (validi++ < salto) continue;
+      var g = T.giorni[d.getDay()] + ' ' + d.getDate() + ' ' + T.mesi[d.getMonth()];
+      if (perGiorno > 1) for (var f = 0; f < fasce.length && r.length < 3; f++) r.push({ giorno: g, ora: fasce[f] });
+      else r.push({ giorno: g, ora: fasce[(validi * 2 - 1) % fasce.length] });
+    }
+    return { orari: r, passo: perGiorno > 1 ? 1 : 3 };
+  }
+
+  function annuncia(t) { if (!annuncio) return; annuncio.textContent = ''; setTimeout(function () { annuncio.textContent = t; }, 60); }
+  function bottone(cls, t, fai) { var b = el('button', cls, t); b.type = 'button'; b.addEventListener('click', fai); return b; }
+  function mettiFuoco(n) { if (!n) return; if (!/^(BUTTON|A|INPUT)$/.test(n.tagName) && !n.hasAttribute('tabindex')) n.setAttribute('tabindex', '-1'); n.focus({ preventScroll: true }); }
+  // porta in vista l'ultima battuta: dentro la chat (computer) e nella pagina (telefono)
+  function inVista(n) {
+    requestAnimationFrame(function () {
+      if (!demo || !n.isConnected) return;
+      var c = demo.chat;
+      if (c.scrollHeight > c.clientHeight + 4) c.scrollTop += n.getBoundingClientRect().top - c.getBoundingClientRect().top - 10;
+      // al telefono la barra dei comandi in basso copre circa 100 px: l'ultima riga deve restare sopra
+      var r = n.getBoundingClientRect(), d = 0, fondo = innerHeight - (innerWidth <= 980 ? 110 : 16);
+      if (r.top < 80) d = r.top - 90; else if (r.bottom > fondo) d = Math.min(r.top - 90, r.bottom - fondo + 8);
+      if (d) scrollBy({ top: d, behavior: ridotto ? 'auto' : 'smooth' });
+    });
+  }
+
+  // scrittura progressiva: se arriva una domanda nuova, la frase in corso si completa all'istante (mai frasi a metà)
+  function finisciScrittura() { if (corsa) { var c = corsa; corsa = null; c.fine(); } }
+  function digita(box, frasi, dopo) {
+    var coda = frasi.map(function (f) { var p = el('p', 'vivo-frase'); box.appendChild(p); return [p, f]; });
+    var io = { fatto: false };
+    io.fine = function () {
+      if (io.fatto) return; io.fatto = true; if (corsa === io) corsa = null;
+      coda.forEach(function (x) { x[0].textContent = x[1]; });
+      box.removeAttribute('aria-busy'); box.classList.add('pronta');
+      if (dopo) dopo();
+    };
+    if (window.Suono) window.Suono.rintocco();
+    if (window.Scena) window.Scena.impulso(.8);
+    parla(frasi.join(' '));
+    if (ridotto) { io.fine(); return; }
+    corsa = io; box.setAttribute('aria-busy', 'true');
+    var i = 0, j = 0, ultimo = 0;
+    (function batti(ora) {
+      if (io.fatto) return;
+      var giro = 3;
+      while (giro-- && i < coda.length) {
+        var f = coda[i][1]; j = Math.min(f.length, j + 2); coda[i][0].textContent = f.slice(0, j);
+        if (j >= f.length) { i++; j = 0; }
+      }
+      if (window.Scena && ora - ultimo > 110) { window.Scena.impulso(.12); ultimo = ora; }
+      if (i < coda.length) requestAnimationFrame(batti); else io.fine();
+    })(performance.now());
+  }
+
+  function turno(tu) {
+    var t = el('div', 'demo-turno');
+    if (tu) { var p = el('p', 'vivo-tu'); p.appendChild(el('span', 'sr', 'Tu, come cliente: ')); p.appendChild(document.createTextNode(tu)); t.appendChild(p); }
+    var box = el('div', 'vivo-jarvis demo-j'); box.appendChild(el('span', 'sr', 'Jarvis: ')); t.appendChild(box);
+    demo.chat.appendChild(t);
+    while (demo.chat.children.length > 12) demo.chat.removeChild(demo.chat.firstChild);
+    inVista(t);
+    return box;
+  }
+  function carta(cls, titolo) { var c = el('div', 'demo-carta ' + cls); c.appendChild(el('p', 'demo-carta-titolo', titolo)); return c; }
+  function messaggio(c, t) { var p = el('p', 'demo-messaggio', t); c.appendChild(p); c.appendChild(el('p', 'demo-piccola', T.anteprima)); }
+  function azioni(lista) { var a = el('div', 'vivo-azioni'); lista.forEach(function (x) { a.appendChild(x); }); return a; }
+  // «Il tuo piano Jarvis» (js/piano-jarvis.js): la scheda con la stima, per il mestiere della demo
+  function pianoBtn() {
+    if (!window.PianoJarvis || !window.PianoJarvis.ha(demo.k)) return null;
+    var k = demo.k;
+    return bottone('btn vuoto piccolo', T.piano || 'Il tuo piano Jarvis', function () { window.PianoJarvis.apri(k); });
+  }
+  function voglio() {
+    return pulsante(vai('#scrivi', T.voglio, { tema: T.temaVoglio.replace('{etichetta}', demo.m.etichetta),
+      frase: 'Ho provato la demo per ' + demo.m.etichetta.toLowerCase() + ': vorrei un Jarvis così per la mia attività.' }));
+  }
+
+  /* la prenotazione di prova: orari → scheda → conferma con l'anteprima del promemoria */
+  function cartaOrari(s, salto) {
+    var p = s.prenota, o = orari(demo.m, p, salto), c = carta('demo-orari', p.voce || 'Orari liberi');
+    c.setAttribute('role', 'group'); c.setAttribute('aria-label', (p.voce || 'Orari liberi') + ': ' + p.servizio);
+    var fila = el('div', 'demo-slot-fila');
+    o.orari.forEach(function (x) {
+      fila.appendChild(bottone('demo-slot', quando(x), function (e) {
+        $$('button', c).forEach(function (b) { b.disabled = true; }); e.currentTarget.setAttribute('aria-pressed', 'true');
+        scheda(s, x, salto);
+      }));
+    });
+    fila.appendChild(bottone('demo-slot altro', T.altriOrari, function () {
+      $$('button', c).forEach(function (b) { b.disabled = true; });
+      var box = turno(T.altriOrari);
+      digita(box, ['Ecco i successivi:'], function () { var n = cartaOrari(s, salto + o.passo); box.appendChild(n); mettiFuoco($('button', n)); inVista(box.parentNode); });
+      annuncia('Jarvis: altri orari. ' + orari(demo.m, p, salto + o.passo).orari.map(quando).join('; ') + '.');
+    }));
+    c.appendChild(fila);
+    return c;
+  }
+  function scheda(s, x, salto) {
+    var p = s.prenota, box = turno(quando(x)), c = carta('demo-scheda', T.scheda), dl = el('dl');
+    [['Attività', demo.m.attivita + ' (di fantasia)'], ['Servizio', p.servizio], ['Dettaglio', p.dettaglio], ['Quando', quando(x)], ['Durata', durata(p.durata)]]
+      .forEach(function (r) { if (r[1]) { dl.appendChild(el('dt', null, r[0])); dl.appendChild(el('dd', null, r[1])); } });
+    c.appendChild(dl);
+    c.appendChild(el('p', 'demo-piccola', T.nessunDato));
+    var si = bottone('btn oro piccolo', T.conferma, function () { si.disabled = no.disabled = true; conferma(s, x); });
+    var no = bottone('btn vuoto piccolo', T.cambia, function () {
+      si.disabled = no.disabled = true;
+      var b2 = turno(T.cambia);
+      digita(b2, ['Nessun problema. Ecco altri orari:'], function () { var n = cartaOrari(s, salto + orari(demo.m, p, salto).passo); b2.appendChild(n); mettiFuoco($('button', n)); inVista(b2.parentNode); });
+    });
+    c.appendChild(azioni([si, no]));
+    box.classList.add('pronta'); box.appendChild(c);
+    mettiFuoco($('.demo-carta-titolo', c));
+    annuncia(T.scheda + ': ' + p.servizio + ', ' + quando(x) + '. ' + T.nessunDato + ' Conferma o cambia orario.');
+  }
+  function conferma(s, x) {
+    var p = s.prenota, box = turno(T.conferma), testo = riempi(p.conferma, x);
+    digita(box, [testo], function () {
+      var c = carta('demo-confermata', T.confermata);
+      c.appendChild(el('p', 'demo-piccola', T.promemoria + ' · ' + p.quando + ':'));
+      messaggio(c, riempi(p.promemoria, x));
+      c.appendChild(el('p', 'demo-dietro', T.dietro));
+      var ul = el('ul', 'vivo-elenco'); T.dietroElenco.forEach(function (d) { ul.appendChild(el('li', null, d)); }); c.appendChild(ul);
+      c.appendChild(azioni([voglio(), pianoBtn()].filter(Boolean)));
+      box.appendChild(c);
+      mettiFuoco($('.demo-carta-titolo', c)); inVista(box.parentNode);
+    });
+    annuncia('Jarvis: ' + testo + ' ' + T.promemoria + ': ' + riempi(p.promemoria, x) + ' ' + T.anteprima);
+  }
+
+  function rispondiScambio(box, s, daTastiera) {
+    var dopo = [], parlato = s.risposta.join(' ') + (s.elenco ? ' ' + s.elenco.join('; ') + '.' : '');
+    if (s.tipo === 'prenota') parlato += ' Orari proposti: ' + orari(demo.m, s.prenota, 0).orari.map(quando).join('; ') + '.';
+    if (s.persona) parlato += ' ' + T.persona + ': ' + T.personaNota.replace('a {chi}', aChi(s.persona.chi));
+    if (s.anteprima) parlato += ' ' + s.anteprima.titolo + ': ' + s.anteprima.testo + ' ' + T.anteprima;
+    digita(box, s.risposta, function () {
+      if (s.elenco) { var ul = el('ul', 'vivo-elenco'); s.elenco.forEach(function (x) { ul.appendChild(el('li', null, x)); }); box.appendChild(ul); }
+      if (s.tipo === 'prenota') { var o = cartaOrari(s, 0); box.appendChild(o); if (!daTastiera) dopo.push($('button', o)); }
+      if (s.persona) {
+        var c = carta('demo-persona' + (s.tipo === 'urgenza' ? ' demo-urgente' : ''), T.persona);
+        c.appendChild(el('p', null, T.personaNota.replace('a {chi}', aChi(s.persona.chi))));
+        c.appendChild(el('p', 'demo-piccola', s.persona.motivo));
+        c.appendChild(el('p', 'demo-piccola', 'Intanto il Jarvis vero ' + s.persona.cosa));
+        box.appendChild(c);
+      }
+      if (s.anteprima) { var a = carta('demo-anteprima', s.anteprima.titolo); messaggio(a, s.anteprima.testo); box.appendChild(a); }
+      var seguito = s.poi && demo.m.scambi.filter(function (x) { return x.id === s.poi; })[0];
+      if (seguito) box.appendChild(azioni([bottone('btn vuoto piccolo', seguito.domanda, function () { chiediDemo(seguito.domanda, seguito.id, false); })]));
+      if (dopo[0]) mettiFuoco(dopo[0]);
+      inVista(box.parentNode);
+    });
+    annuncia('Jarvis: ' + parlato);
+  }
+
+  function chiediDemo(q, id, daTastiera) {
+    if (!demo) return;
+    var m = demo.m, t = q.toLowerCase(), s = null, giu = DEMO.lasciaAgliArgomenti.test(t);
+    if (id) s = m.scambi.filter(function (x) { return x.id === id; })[0] || null;
+    else if (!giu) s = cercaScambio(m, t);
+    // un altro mestiere dichiarato («ho una pizzeria», «sono avvocato») o nominato da solo: si passa alla sua demo.
+    // Una parola di passaggio («il locale è accessibile?», «un certificato medico») non porta via il cliente.
+    if (!s && !giu && (/\b(ho|abbiamo|gestisco|gestiamo|sono|siamo|faccio|lavoro|apro|prova|provo|demo)\b/.test(t) || t.split(' ').length <= 3)) {
+      var altro = mestiereDemo(t, null);
+      if (altro && altro !== demo.k) { avviaDemo(altro, q, daTastiera); return; }
+    }
+    finisciScrittura();
+    if (daTastiera) inp.value = '';
+    var box = turno(q);
+    if (s) {
+      rispondiScambio(box, s, daTastiera);
+      $$('[data-scambio="' + s.id + '"]', demo.domande).forEach(function (b) { b.classList.add('fatta'); });
+      return;
+    }
+    // domande su Jarvis (costi, dati, «chi sei»): le risposte già scritte della pagina, senza cambiare profilo
+    var blocchi = giu ? capisci(q).argomenti.map(function (a) { return a.fai ? a.fai(q) : null; }).filter(Boolean) : [];
+    if (!blocchi.length) {
+      var restano = m.scambi.filter(function (x) { return !$('[data-scambio="' + x.id + '"].fatta', demo.domande); }).slice(0, 3);
+      blocchi = [{ frase: T.fuori.replace('{attivita}', m.attivita),
+        azioni: restano.map(function (x) { return bottone('btn vuoto piccolo', x.domanda, function () { chiediDemo(x.domanda, x.id, false); }); })
+          // nel modulo va una frase fissa, non quella del visitatore: nei panni del cliente può aver scritto sintomi o fatti legali
+          .concat([pulsante(vai('#scrivi', 'Chiedilo a Manuel', { tema: T.temaVoglio.replace('{etichetta}', m.etichetta),
+            frase: 'Ho provato la demo per ' + m.etichetta.toLowerCase() + ' e ho una domanda che non era nell\'esempio.' }))]) }];
+    }
+    var frasi = blocchi.map(function (b) { return b.frase; });
+    digita(box, frasi, function () {
+      blocchi.forEach(function (b) {
+        if (b.elenco && b.elenco.length) { var ul = el('ul', 'vivo-elenco'); b.elenco.forEach(function (x) { ul.appendChild(el('li', null, x)); }); box.appendChild(ul); }
+        if (b.azioni && b.azioni.length) box.appendChild(azioni(b.azioni.map(function (a) { return a.nodeType ? a : pulsante(a); })));
+      });
+      inVista(box.parentNode);
+    });
+    annuncia('Jarvis: ' + blocchi.map(function (b) { return b.frase + (b.elenco && b.elenco.length ? ' ' + b.elenco.join('; ') + '.' : ''); }).join(' '));
+  }
+
+  function avviaDemo(k, q, fuoco) {
+    var m = DEMO && DEMO.mestieri[k]; if (!m) return;
+    finisciScrittura(); if (sintesi) sintesi.cancel();
+    demo = { k: k, m: m };
+    chips.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-mestiere') === k ? 'true' : 'false'); });
+    out.textContent = ''; out.hidden = false; out.classList.add('demo');
+    var testa = el('div', 'demo-testa'), chi = el('div', 'demo-chi');
+    var nome = el('p', 'demo-attivita', m.attivita); chi.appendChild(nome);
+    chi.appendChild(el('p', 'demo-fantasia', T.fantasia)); testa.appendChild(chi);
+    testa.appendChild(azioni([bottone('btn vuoto piccolo', T.ricomincia, ricomincia), voglio(), pianoBtn()].filter(Boolean)));
+    out.appendChild(testa);
+    // sul computer la chat scorre da sola: con tabindex si scorre anche con le frecce della tastiera
+    demo.chat = el('div', 'demo-chat'); demo.chat.tabIndex = 0; demo.chat.setAttribute('role', 'region'); demo.chat.setAttribute('aria-label', 'Conversazione di prova');
+    out.appendChild(demo.chat);
+    demo.domande = el('div', 'demo-domande'); demo.domande.setAttribute('role', 'group'); demo.domande.setAttribute('aria-label', T.domande);
+    demo.domande.appendChild(el('p', 'demo-cap', T.domande));
+    m.scambi.forEach(function (s) {
+      var b = bottone('demo-domanda', s.domanda, function () { chiediDemo(s.domanda, s.id, false); });
+      b.setAttribute('data-scambio', s.id); demo.domande.appendChild(b);
+    });
+    out.appendChild(demo.domande);
+    if (etichetta) etichetta.lastChild.textContent = 'Fai il cliente: scrivi a ' + ((m.attivita.match(/«[^»]+»/) || [m.attivita])[0]);
+    inp.placeholder = 'Per esempio: ' + m.scambi[0].domanda.toLowerCase();
+    // la pagina si ricompone col profilo collegato (titolo, squadra, giornata, forma)
+    ultimoProfilo = '';
+    if (window.Sito) window.Sito.scegliProfilo(m.profilo, false);
+    if (window.PianoJarvis) window.PianoJarvis.suggerisci(k);
+    if (window.PrimaDopo) window.PrimaDopo.suggerisci(k);
+    var box = turno(null);
+    digita(box, [m.apertura]);
+    annuncia('Esempio guidato con ' + m.attivita + '. ' + T.fantasia + ' Jarvis: ' + m.apertura);
+    if (fuoco) mettiFuoco(nome);
+    requestAnimationFrame(function () { var r = out.getBoundingClientRect(); if (r.top > innerHeight * .55 || r.top < 0) out.scrollIntoView({ behavior: ridotto ? 'auto' : 'smooth', block: 'start' }); });
+    // una domanda già scritta che corrisponde a uno scambio riceve subito la sua risposta
+    if (q && !DEMO.lasciaAgliArgomenti.test(q.toLowerCase()) && cercaScambio(m, q.toLowerCase())) chiediDemo(q, null, true);
+    else if (q) inp.value = '';
+  }
+
+  function ricomincia() {
+    finisciScrittura(); if (sintesi) sintesi.cancel();
+    demo = null; out.textContent = ''; out.hidden = true; out.classList.remove('demo');
+    chips.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+    if (etichetta) etichetta.lastChild.textContent = ETICHETTA_ORIG;
+    inp.placeholder = SEGNAPOSTO_ORIG; inp.value = '';
+    ultimoProfilo = '';
+    if (window.Sito) window.Sito.scegliProfilo('tutti', false);
+    if (chips[0]) chips[0].focus();
+    annuncia('Demo ricominciata da capo. Scegli un mestiere, oppure scrivi cosa ti serve.');
+  }
+
+  // la scelta del mestiere sotto la riga di comando e la nota di onestà fissa, sempre visibile
+  if (DEMO) {
+    var scelta = el('div', 'demo-scelta'), tit = el('p', 'demo-titolo', T.titolo);
+    tit.id = 'demo-titolo'; scelta.setAttribute('role', 'group'); scelta.setAttribute('aria-labelledby', 'demo-titolo');
+    scelta.appendChild(tit);
+    var fila = el('div', 'demo-mestieri');
+    DEMO.ordine.forEach(function (k) {
+      var m = DEMO.mestieri[k], p = profili()[m.profilo] || {};
+      var b = bottone('demo-mestiere', m.etichetta, function () { avviaDemo(k, null, false); });
+      b.setAttribute('data-mestiere', k); b.setAttribute('aria-pressed', 'false'); if (p.colore) b.style.setProperty('--c', p.colore);
+      fila.appendChild(b); chips.push(b);
+    });
+    scelta.appendChild(fila);
+    scelta.appendChild(el('p', 'demo-istruzioni', T.istruzioni));
+    form.after(scelta);
+    out.after(el('p', 'demo-nota', DEMO.nota));
   }
 
   /* ---------- voce in uscita: solo voci italiane del dispositivo, solo con il suono acceso ---------- */
@@ -377,5 +693,6 @@
   }
 
   // il comando «Piano» e Jarvis vivo parlano la stessa lingua: da fuori si può scrivere qui
-  window.Vivo = { chiedi: function (q) { inp.value = q; invia(); }, fuoco: function () { inp.focus(); } };
+  window.Vivo = { chiedi: function (q) { inp.value = q; invia(); }, fuoco: function () { inp.focus(); },
+    demo: function (k) { avviaDemo(k, null, false); }, ricomincia: function () { if (demo) ricomincia(); } };
 })();

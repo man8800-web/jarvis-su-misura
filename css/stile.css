@@ -650,7 +650,8 @@ body.con-3d main :is(.luce,h1 .riga:nth-child(2) span){text-shadow:none}
 @media (max-width:980px){body.con-3d .vignetta{background:linear-gradient(180deg,rgba(5,8,16,.18),rgba(5,8,16,.42))}}
 /* tratti di volo: niente schede, solo la scena e una frase. Alti di base, così l'arrivo del 3D non sposta la pagina */
 .soglia{position:relative;min-height:190vh;min-height:190svh;padding:0 clamp(20px,6vw,80px)}
-.soglia-frase{--giu:0vh;position:sticky;top:calc(50vh + var(--giu) - 1.1em);margin:calc(95vh + var(--giu) - 1.1em) auto 0;max-width:17ch;text-align:center;font-size:clamp(36px,5.6vw,80px);line-height:1.05;font-weight:690;letter-spacing:-.045em;color:var(--testo);text-shadow:0 1px 3px rgba(5,8,16,.75),0 3px 44px rgba(5,8,16,.95),0 0 90px rgba(5,8,16,.8)}
+.soglia-frase{--giu:0vh;position:sticky;top:calc(50vh + var(--giu) - 1.1em);margin:calc(95vh + var(--giu) - 1.1em) auto 0;max-width:17ch;text-align:center;font-size:clamp(36px,5.6vw,80px);line-height:1.05;font-weight:690;letter-spacing:-.045em;color:var(--testo);text-shadow:0 1px 3px rgba(5,8,16,.85),0 2px 12px rgba(5,8,16,.9),0 0 24px rgba(5,8,16,.8)}
+/* ombre fino a 24 px: quelle da 44 e 90 px, ridisegnate sopra il 3D a ogni fotogramma, portavano i voli a 15-25 fps sul telefono (revisione 07/11/2026) */
 #soglia-galassia .soglia-frase{--giu:20vh}#soglia-plancia .soglia-frase{--giu:12vh}
 body.senza-3d .soglia{min-height:0;padding-top:12vh;padding-bottom:12vh}
 body.senza-3d .soglia-frase{position:static;margin:0 auto}
@@ -730,6 +731,52 @@ h2{letter-spacing:-.04em}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.35s}
 @media (max-width:980px){.vivo-zona{max-width:none}}
 @media (max-width:600px){.vivo-form{padding:12px 11px}.vivo-etichetta{font-size:9.5px}#vivo-testo{font-size:16px}.vivo-suggerimenti button{font-size:13px;padding:7px 11px}.vivo-risposta{padding:16px;max-height:none;overflow:visible}}
+/* ---------- demo guidata: scelta del mestiere, conversazione preparata, prenotazione di prova ---------- */
+.demo-scelta{margin:14px 0 0;padding:0 2px}
+.demo-titolo,.demo-cap,.demo-carta-titolo{margin:0 2px 8px;font:600 10.5px/1.35 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:#bfe9e2}
+.demo-mestieri{display:flex;flex-wrap:wrap;gap:7px}
+.demo-mestiere,.demo-domanda,.demo-slot{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 13px;border:1px solid rgba(188,211,218,.18);border-radius:999px;background:rgba(6,11,19,.74);color:#d3dde6;font-size:13.5px;line-height:1.25;text-align:left;cursor:pointer;transition:border-color .25s,color .25s,background .25s}
+.demo-mestiere::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--c,var(--ciano));box-shadow:0 0 8px var(--c,var(--ciano))}
+.demo-mestiere:hover,.demo-domanda:hover,.demo-slot:not(:disabled):hover{border-color:color-mix(in srgb,var(--c,var(--ciano)) 60%,transparent);color:#fff;background:rgba(136,227,232,.08)}
+.demo-mestiere[aria-pressed="true"]{border-color:var(--c,var(--ciano));background:color-mix(in srgb,var(--c,var(--ciano)) 18%,rgba(6,11,19,.85));color:#fff}
+.demo-istruzioni{margin:9px 2px 0;font-size:13px;line-height:1.5;color:#a9b6c4}
+.demo-nota{display:flex;align-items:flex-start;gap:8px;margin:10px 2px 0;font-size:12.5px;line-height:1.5;color:#b4c0cc}
+.demo-nota::before{content:"i";flex:none;display:grid;place-items:center;width:17px;height:17px;margin-top:1px;border:1px solid currentColor;border-radius:50%;font:700 10px/1 var(--mono)}
+.vivo-risposta.demo{max-height:none;overflow:visible}
+.demo-testa{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:10px 16px;margin:0 0 14px;padding:0 0 13px;border-bottom:1px solid rgba(188,211,218,.12)}
+.demo-testa .vivo-azioni{margin:0}
+.demo-chi{flex:1 1 240px;min-width:0}
+.demo-attivita{margin:0;font:700 16.5px/1.3 var(--sans);color:#fff}
+.demo-attivita:focus{outline:none}
+.demo-fantasia{margin:4px 0 0;font-size:12.5px;line-height:1.45;color:#a9b6c4}
+.demo-chat{max-height:min(46vh,430px);overflow:auto;overscroll-behavior:contain;padding-right:6px}
+.demo-turno{margin:0 0 6px}
+.demo-carta{margin:2px 0 14px;padding:13px 14px 12px;border:1px solid rgba(188,211,218,.16);border-radius:16px;background:rgba(255,255,255,.03);animation:apriRisposta .45s cubic-bezier(.2,.8,.2,1)}
+.demo-carta-titolo{margin:0 0 10px;color:var(--vivo,var(--ciano))}
+.demo-carta-titolo:focus{outline:none}
+.demo-carta p{margin:0 0 8px;font-size:14.5px;line-height:1.55;color:#dfe7ee}
+.demo-carta .vivo-azioni{margin:10px 0 2px}
+.demo-carta p.demo-piccola,.demo-piccola{font-size:12.5px;color:#a9b6c4}
+.demo-slot-fila{display:flex;flex-wrap:wrap;gap:7px}
+.demo-slot{border-color:color-mix(in srgb,var(--vivo,var(--ciano)) 40%,transparent)}
+.demo-slot.altro{border-style:dashed;color:#b8c5d1}
+.demo-slot[aria-pressed="true"]{border-color:var(--vivo,var(--ciano));background:color-mix(in srgb,var(--vivo,var(--ciano)) 22%,transparent);color:#fff;opacity:1}
+.demo-slot:disabled{cursor:default;opacity:.5}
+.demo-scheda dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 10px;font-size:14.5px;line-height:1.45}
+.demo-scheda dt{color:#9aa9b9}
+.demo-scheda dd{margin:0;color:#f0f4f8}
+.demo-carta .btn:disabled{opacity:.5;cursor:default;box-shadow:none}
+.demo-carta p.demo-messaggio{margin:0 0 6px;padding:10px 13px;border:1px solid rgba(136,227,232,.22);border-radius:14px 14px 14px 4px;background:rgba(136,227,232,.07);color:#eaf4f6}
+.demo-dietro{font-weight:600}
+.demo-carta .vivo-elenco{margin-bottom:4px;font-size:14px}
+.demo-persona,.demo-confermata{border-color:color-mix(in srgb,var(--oro) 45%,transparent)}
+.demo-persona .demo-carta-titolo{color:var(--oro)}
+.demo-urgente{border-color:color-mix(in srgb,var(--rosso,#ff6b6b) 70%,transparent);background:rgba(255,107,107,.06)}
+.demo-urgente .demo-carta-titolo{color:var(--rosso,#ff6b6b)}
+.demo-domande{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;padding-top:13px;border-top:1px solid rgba(188,211,218,.12)}
+.demo-cap{flex-basis:100%;margin-bottom:2px}
+.demo-domanda.fatta{color:#93a3b5;border-style:dashed}
+@media (max-width:600px){.demo-chat{max-height:none;overflow:visible;padding-right:0}.demo-testa .vivo-azioni{width:100%}.demo-testa .btn{flex:1 1 auto}.demo-mestiere,.demo-domanda,.demo-slot{font-size:13px;padding:7px 11px}}
 
 /* ---------- interruttore del suono ---------- */
 .suono-interr{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 14px;border:1px solid rgba(183,205,226,.2);border-radius:999px;background:rgba(10,16,26,.5);color:#bbc5d1;font:600 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:color .3s,border-color .3s}
@@ -741,6 +788,16 @@ h2{letter-spacing:-.04em}
 .suono-interr .barre i:nth-child(2){animation-delay:-.35s}.suono-interr .barre i:nth-child(3){animation-delay:-.6s}.suono-interr .barre i:nth-child(4){animation-delay:-.15s}
 @keyframes barra{from{height:3px}to{height:14px}}
 .testata nav{margin-inline:auto}
+/* computer: il menu prende lo spazio libero e, se le voci non ci stanno, scorre di lato; suono e «Scrivi a Jarvis» restano sempre interi */
+@media (min-width:981px){
+  .testata nav{flex:1 1 auto;min-width:0;display:flex}
+  .menu{width:max-content;max-width:100%;margin-inline:auto;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain}
+  .menu::-webkit-scrollbar{display:none}
+  .menu li{flex:none}
+  .menu a[aria-current="true"]{color:var(--testo);background:rgba(136,227,232,.12)}
+  .menu.trabocca{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent)}
+  .testata>.btn,.suono-interr{flex:none}
+}
 @media (max-width:980px){.testata nav{margin-inline:-18px}.suono-interr{margin-left:auto;min-height:38px}}
 @media (max-width:600px){.suono-interr{padding:0 11px}.suono-interr .suono-parola{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 
@@ -806,3 +863,43 @@ body.con-3d main h2 .luce{filter:drop-shadow(0 1px 12px rgba(5,8,16,.92))}
    Ai lati resta dentro il margine della sezione: oltre il bordo allargherebbe la pagina sul telefono */
 body.con-3d #trasforma .testa-sezione{position:relative;isolation:isolate}
 body.con-3d #trasforma .testa-sezione::before{content:"";position:absolute;z-index:-1;inset:-14% -12px -18% -12px;pointer-events:none;background:radial-gradient(ellipse 60% 58% at 40% 52%,rgba(5,8,16,.86),rgba(5,8,16,.6) 55%,transparent 80%)}
+/* ---------- telefono, correzioni viste sull'iPhone vero (07/11/2026) ---------- */
+@media (max-width:980px){
+  /* barra in basso: fondo pieno, e scorrendo verso il basso scende fuori dallo schermo (torna appena si risale) */
+  .comandi,body.con-3d .comandi{background:rgb(5,8,18);border-color:rgba(183,205,226,.22);box-shadow:0 -10px 30px rgba(5,8,16,.7),0 18px 50px rgba(0,0,0,.55)}
+  body.scorre-giu .comandi{transform:translateX(50%) translateY(calc(100% + 24px + env(safe-area-inset-bottom)));opacity:0;pointer-events:none}
+  body.scorre-giu .comandi:focus-within{transform:translateX(50%);opacity:1;pointer-events:auto}
+  /* WhatsApp: sulla stessa riga della barra, a destra, mai sopra il testo; scende e risale con lei */
+  .whatsapp{bottom:calc(max(10px,env(safe-area-inset-bottom)) + 11px);right:12px;width:50px;height:50px;padding:0;justify-content:center;background:rgb(10,22,19)}
+  body.scorre-giu .whatsapp{transform:translateY(calc(100% + 40px + env(safe-area-inset-bottom)));opacity:0;pointer-events:none}
+  body.scorre-giu .whatsapp:focus-visible{transform:none;opacity:1;pointer-events:auto}
+  /* menu in alto: ogni voce si ferma intera, i bordi sfumano per dire che si scorre, la sezione attuale si accende */
+  .testata nav{padding:0 0 9px}
+  .menu{padding:0 18px;scroll-padding-inline:18px;scroll-snap-type:x proximity;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 26px),transparent)}
+  .menu li{flex:none;scroll-snap-align:start}
+  .menu a[aria-current="true"]{color:var(--testo);background:rgba(136,227,232,.12)}
+  /* margine per il fondo: la barra non copre l'ultima riga del piè di pagina */
+  body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+}
+/* telefono stretto: la barra a sinistra lascia il posto a WhatsApp sulla stessa riga */
+@media (max-width:520px){
+  .comandi{right:auto;left:10px;transform:none;gap:3px;padding:5px}
+  body.in-cima .comandi{transform:translateY(150%)}
+  body.in-cima .comandi:focus-within,body.scorre-giu .comandi:focus-within{transform:none}
+  body.scorre-giu .comandi{transform:translateY(calc(100% + 24px + env(safe-area-inset-bottom)))}
+  .comando{min-width:0;width:calc((100vw - 10px - 10px - 9px - 10px - 50px - 12px) / 4);max-width:76px;padding:7px 2px}
+  .comando[aria-pressed="true"]::after{top:-6px}
+  .whatsapp{bottom:calc(max(10px,env(safe-area-inset-bottom)) + 10px)}
+}
+@media (max-width:360px){.comando span{font-size:8px;letter-spacing:.03em}.comando svg{width:23px;height:23px}}
+/* vuoti tra le sezioni: tratti di volo più corti sul telefono. La frase non sfonda più fuori dalla sezione
+   (prima il suo margine si sommava al tratto: quasi due schermate di nero), il volo del 3D resta fra le stesse tappe */
+@media (max-width:600px){
+  .sezione{padding-top:68px;padding-bottom:68px}
+  .soglia{display:flow-root;min-height:112vh;min-height:112svh}
+  .soglia-frase{top:calc(40svh + var(--giu) * .5);margin-top:calc(46svh + var(--giu) * .5)}
+  body.senza-3d .soglia{min-height:0;padding-top:56px;padding-bottom:56px}
+  body.senza-3d .soglia-frase{margin:0 auto}
+}
+/* sui touch l'hover resta appiccicato sotto il dito: nel menu conta solo la voce della sezione attuale */
+@media (hover:none){.menu a:hover:not([aria-current]){background:none;color:#bbc5d1}}

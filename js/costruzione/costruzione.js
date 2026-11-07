@@ -135,11 +135,27 @@ let livello = 0, livelloVisto = 0, voli = [], attaccati = 0, finito = false;
 let px = 0, py = 0, pxv = 0, pyv = 0, t0 = performance.now(), ultimo = t0;
 let dentro = false, visibile = !document.hidden, richiesto = false, larg = 0, alt = 0;
 
+/* ---- freno di qualità: misura i fotogrammi veri e scende da solo se il dispositivo fatica ----
+   0 = pieno (densità fino a 1,5-2 e bagliore), 1 = densità 1 senza bagliore (sotto i 45 fps),
+   2 = fermo: disegna solo mentre un modulo vola o si aggancia (sotto i 25 fps anche al livello 1).
+   Due finestre di 2 s di fila per scendere, così uno scatto dello scorrimento non conta. */
+let freno = 0, frAcc = 0, frN = 0, frFin = 0, frCattive = 0, frPrima = 0;
+function misuraFotogramma(ms) {
+  if (ms > 250 || freno >= 2) return;                       // scheda ferma o già al minimo
+  frAcc += ms; frN++; frFin += ms;
+  if (frFin < 2000) return;
+  const media = frAcc / frN;
+  if (media > (freno === 0 ? 22 : 40)) {
+    if (++frCattive >= 2) { frCattive = 0; freno++; larg = 0; }   // larg = 0: misura() rifà densità e bagliore
+  } else frCattive = 0;
+  frAcc = 0; frN = 0; frFin = 0;
+}
+
 function misura() {
   const w = tela.clientWidth, h = tela.clientHeight;
   if (!w || !h || (w === larg && h === alt)) return;
   larg = w; alt = h;
-  const dpr = Math.min(devicePixelRatio || 1, w < 520 ? 1.5 : 2);
+  const dpr = freno ? 1 : Math.min(devicePixelRatio || 1, w < 520 ? 1.5 : 2);
   rend.setPixelRatio(dpr); rend.setSize(w, h, false);
   if (comp) { comp.setPixelRatio(dpr); comp.setSize(w, h); }
   cam.aspect = w / h;
@@ -257,14 +273,23 @@ function disegna(ora) {
 
   polvere.rotation.y = t * 0.012;
 
-  if (comp) comp.render(); else rend.render(scena, cam);
+  if (comp && !freno) comp.render(); else rend.render(scena, cam);
 }
 
 /* ---- ciclo: gira solo quando serve ---- */
+function inMovimento(ora) {
+  if (voli.length || onde.length) return true;
+  // ultimo aggancio da meno di 1 s: il filo e il lampo si stanno ancora accendendo
+  for (const s of posti) if (s.agganciato && ora - s.agganciato < 1000) return true;
+  return Math.abs(livello - livelloVisto) > 0.01;
+}
 function ciclo(ora) {
   richiesto = false;
-  if (!dentro || !visibile) return;
+  if (!dentro || !visibile) { frPrima = 0; return; }
+  if (frPrima) misuraFotogramma(ora - frPrima);            // intervallo vero tra due fotogrammi di fila
+  frPrima = ora;
   disegna(ora);
+  if (freno >= 2 && !inMovimento(ora)) { frPrima = 0; return; }   // fermo: il prossimo fotogramma lo chiede un aggancio
   richiedi();
 }
 function richiedi() { if (!richiesto && dentro && visibile) { richiesto = true; ultimo = performance.now(); requestAnimationFrame(ciclo); } }
@@ -298,6 +323,8 @@ window.Costruzione = {
   reset,
   nucleo(f) { livello = clamp(f, 0, 1); richiedi(); },
   pronto() { finito = true; livello = 1; richiedi(); },
+  // livello del freno di qualità (0 pieno, 1 leggero, 2 fermo): lo leggono le prove
+  get freno() { return freno; },
 };
 misura();
 rend.render(scena, cam);

@@ -1,0 +1,62 @@
+/* «Prova a fregarmi»: campo per le domande cattive, carta della risposta, muro di quello che Jarvis non farà mai.
+   Fondi pieni (non trasparenti) per il contrasto sopra la scena 3D. */
+.fr-zona{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:clamp(20px,3vw,36px);align-items:start}
+.fr-banco,.fr-muro-box{position:relative;border-radius:24px;border:1px solid var(--filo2);background:linear-gradient(170deg,rgba(14,22,40,.95),rgba(4,7,16,.96));box-shadow:0 40px 120px -50px rgba(255,107,107,.35)}
+.fr-banco{padding:clamp(20px,3vw,34px)}
+.fr-etichetta{display:block;font:600 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--tenue);margin-bottom:12px}
+.fr-riga{display:flex;gap:10px;align-items:stretch}
+.fr-riga input{flex:1 1 auto;min-width:0;min-height:50px;padding:12px 18px;border-radius:999px;border:1px solid var(--filo2);background:rgba(2,4,12,.9);color:var(--testo);font-size:16px}
+.fr-riga input::placeholder{color:var(--spento)}
+.fr-riga input:focus{border-color:var(--oro);outline:none;box-shadow:0 0 0 3px rgba(243,205,115,.25)}
+.fr-riga .btn{flex:none}
+.fr-nota{margin:10px 4px 0;font-size:14px;color:var(--tenue)}
+.fr-nota.fr-avviso{color:var(--oro)}
+.fr-scorciatoie{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.fr-chip{min-height:44px;padding:9px 15px;border-radius:999px;border:1px solid var(--filo2);background:rgba(2,4,12,.85);color:var(--testo);font:500 14.5px/1.3 var(--sans);text-align:left;cursor:pointer;transition:border-color .2s,background .2s}
+.fr-chip:hover{border-color:var(--rosso);background:rgba(255,107,107,.08)}
+.fr-pesca{border-style:dashed;color:var(--oro);border-color:rgba(243,205,115,.5)}
+.fr-risposta:empty{display:none}
+.fr-risposta{margin-top:24px}
+.fr-carta{border-radius:18px;border:1px solid rgba(95,227,161,.35);background:#050a14;padding:clamp(18px,2.6vw,28px)}
+.fr-carta.fr-ripiego{border-color:rgba(243,205,115,.45)}
+@media (prefers-reduced-motion:no-preference){.fr-carta{animation:fr-entra .45s cubic-bezier(.2,.7,.2,1)}}
+@keyframes fr-entra{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.fr-testa{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;margin-bottom:10px}
+.fr-chiesto{margin:0;font-size:14px;color:var(--tenue);overflow-wrap:anywhere}
+.fr-chiesto q{color:var(--testo)}
+.fr-bollino{font:600 10.5px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--menta)}
+.fr-ripiego .fr-bollino{color:var(--oro)}
+.fr-titolo{margin:0 0 4px;font-size:clamp(20px,2.2vw,25px);line-height:1.25}
+.fr-titolo:focus{outline:none}
+.fr-titolo:focus-visible{outline:2px solid var(--oro)}
+.fr-capito{margin:0 0 12px;font-size:13.5px;color:var(--spento)}
+.fr-r{margin:12px 0 0;color:var(--testo)}
+.fr-limite,.fr-mai{margin-top:18px;padding:14px 16px;border-radius:14px}
+.fr-limite{background:rgba(243,205,115,.07);border-left:3px solid var(--oro)}
+.fr-mai{background:rgba(255,107,107,.07);border-left:3px solid var(--rosso)}
+.fr-limite b,.fr-mai b{display:block;font:600 11px/1.3 var(--mono);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.fr-limite b{color:var(--oro)}
+.fr-mai b{color:var(--rosso)}
+.fr-limite p{margin:0;color:var(--testo);font-size:15.5px}
+.fr-mai ul{margin:0;padding-left:20px;font-size:15.5px}
+.fr-mai li+li{margin-top:4px}
+.fr-vicine{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+.fr-vicine-t{flex-basis:100%;margin:0;font-size:14px;color:var(--tenue)}
+.fr-piede{margin-top:20px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.fr-piede-nota{font-size:13px;color:var(--spento);flex:1 1 220px}
+.fr-conta{margin:14px 4px 0;font:500 12px/1.4 var(--mono);color:var(--spento)}
+.fr-conta:empty{display:none}
+.fr-muro-box{padding:clamp(20px,2.6vw,30px);border-color:rgba(255,107,107,.4)}
+.fr-muro-box h3{margin:0 0 16px;font-size:clamp(21px,2.2vw,26px);line-height:1.2}
+.fr-muro-box h3 span{color:var(--rosso)}
+.fr-muro{margin:0;padding:0;list-style:none;counter-reset:fr}
+.fr-muro li{counter-increment:fr;position:relative;padding:10px 0 10px 40px;border-top:1px solid var(--filo);font-size:15.5px;line-height:1.45}
+.fr-muro li::before{content:"";position:absolute;left:4px;top:13px;width:20px;height:20px;border-radius:50%;border:2px solid var(--rosso);background:linear-gradient(45deg,transparent 44%,var(--rosso) 44%,var(--rosso) 56%,transparent 56%)}
+.fr-muro-nota{margin:14px 0 0;font-size:13.5px;color:var(--tenue)}
+@media (min-width:981px){.fr-muro-box{position:sticky;top:96px}}
+@media (max-width:980px){.fr-zona{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){
+  .fr-riga{flex-direction:column}
+  .fr-riga .btn{width:100%}
+  .fr-chip{font-size:14px}
+}

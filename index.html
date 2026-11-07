@@ -6,6 +6,9 @@
 <title>Jarvis su misura | L'assistente che lavora per la tua attività</title>
 <meta name="description" content="Un assistente con intelligenza artificiale costruito su misura: gli parli, ricorda quello che gli affidi, lavora sul tuo computer e sul telefono, con una squadra di specialisti costruita per il tuo lavoro. Le azioni importanti partono solo con il tuo sì.">
 <meta name="theme-color" content="#02030a">
+<!-- Rete: la pagina può parlare solo con sé stessa e con il modulo contatti (Apps Script). Qualsiasi altra richiesta verso fuori viene bloccata dal browser. -->
+<meta http-equiv="Content-Security-Policy" content="connect-src 'self' blob: data: https://script.google.com https://script.googleusercontent.com">
+<meta name="referrer" content="no-referrer">
 <meta property="og:title" content="Jarvis su misura. Non un chatbot: un socio che lavora.">
 <meta property="og:description" content="Assistente con intelligenza artificiale costruito su misura per la tua attività. Niente parte senza il tuo sì.">
 <meta property="og:image" content="https://jarvissumisura.com/media/anteprima-social.png">
@@ -25,7 +28,12 @@
 <link rel="preload" href="media/caratteri/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/stile.css">
 <link rel="stylesheet" href="css/assemblaggio.css">
-<noscript><style>.rivela{opacity:1;transform:none}.soglia{min-height:0;padding-top:12vh;padding-bottom:12vh}.soglia-frase{position:static;margin:0 auto}.vivo-zona,.comandi,.suono-interr,.trasforma-zona,.squadra-zona,.profilo-attivo,.lettore,.console{display:none}</style></noscript>
+<link rel="stylesheet" href="css/giornata.css">
+<link rel="stylesheet" href="css/fregarmi.css">
+<link rel="stylesheet" href="css/piano-jarvis.css">
+<link rel="stylesheet" href="css/prima-dopo.css">
+<link rel="stylesheet" href="css/squadra-lavoro.css">
+<noscript><style>.rivela{opacity:1;transform:none}.soglia{min-height:0;padding-top:12vh;padding-bottom:12vh}.soglia-frase{position:static;margin:0 auto}.vivo-zona,.comandi,.suono-interr,.trasforma-zona,.squadra-zona,.profilo-attivo,.lettore,.console,.mg-pista,.mg-mestieri,.fr-banco,.pj-banco,.pd-banco{display:none}</style></noscript>
 </head>
 <body>
 <a class="salta" href="#contenuto">Vai al contenuto</a>
@@ -43,13 +51,17 @@
     <ul class="menu">
       <li><a href="#trasforma">Il tuo Jarvis</a></li>
       <li><a href="#giornata">Giornata</a></li>
+      <li><a href="#mestiere">Sul tuo mestiere</a></li>
+      <li><a href="#prima-dopo">Prima e dopo</a></li>
       <li><a href="#squadra">Squadra</a></li>
       <li><a href="#poteri">Cosa sa fare</a></li>
       <li><a href="#servizi">Cosa costruiamo</a></li>
       <li><a href="#tasca">In tasca</a></li>
       <li><a href="#dati">I tuoi dati</a></li>
       <li><a href="#dietro">Chi siamo</a></li>
+      <li><a href="#fregarmi">Prova a fregarmi</a></li>
       <li><a href="#domande">Domande</a></li>
+      <li><a href="#piano-jarvis">Il tuo piano</a></li>
     </ul>
   </nav>
   <button class="suono-interr" id="suono" type="button" aria-pressed="false" hidden><span class="barre" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="suono-parola">Suono<span class="suono-sep" aria-hidden="true"> · </span><span class="sr">: </span><span class="suono-stato">spento</span></span></button>
@@ -185,6 +197,71 @@
   </div>
 </section>
 
+<!-- 3b. Una giornata sul tuo mestiere: telefono 3D guidato dallo scorrimento (js/giornata-mestiere.js) -->
+<section class="sezione mg" id="mestiere" data-atto="nucleo" aria-labelledby="t-mestiere">
+  <div class="contenitore">
+    <div class="testa-sezione rivela" style="margin-bottom:0">
+      <span class="etichetta">Una giornata sul tuo mestiere</span>
+      <h2 id="t-mestiere">Scorri. <span class="luce">Guarda una giornata intera.</span></h2>
+      <p class="intro">Scegli il mestiere e scendi con la pagina: sul telefono arrivano i messaggi dei clienti, Jarvis prepara le risposte, tu dici sì, l'agenda si riempie e la sera partono i promemoria.</p>
+      <div class="mg-mestieri" role="group" aria-label="Scegli il mestiere della giornata"></div>
+      <p class="mg-nota-testa"></p>
+    </div>
+  </div>
+  <div class="mg-pista">
+    <div class="mg-palco">
+      <div class="mg-didascalia">
+        <div class="mg-riga-su"><span class="mg-num" aria-hidden="true"></span><label class="mg-scegli-et">Mestiere <select class="mg-scegli"></select></label></div>
+        <div aria-hidden="true"><p class="mg-ora"></p> <h3 class="mg-titolo"></h3><p class="mg-testo"></p><p class="mg-fase"></p></div>
+        <div class="mg-extra"></div>
+        <div class="mg-nav" role="group" aria-label="Tappe della giornata">
+          <button class="mg-freccia mg-prima" type="button" aria-label="Tappa precedente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="mg-punti"></div>
+          <button class="mg-freccia mg-dopo" type="button" aria-label="Tappa successiva"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <p class="mg-nota"></p>
+      </div>
+      <div class="mg-scena" aria-hidden="true">
+        <canvas class="mg-tela"></canvas>
+        <div class="mg-cornice"><div class="mg-schermo"><span class="mg-isola"></span><div class="mg-stato"><span class="mg-ora-tel"></span><i></i></div><div class="mg-corpo"></div><span class="mg-riflesso"></span></div></div>
+        <span class="mg-bollino">Esempio · dati di fantasia</span>
+      </div>
+    </div>
+    <ol class="sr mg-copione"></ol>
+    <p class="sr mg-annuncio" aria-live="polite"></p>
+  </div>
+</section>
+
+<!-- 3c. Prima e dopo: barra da trascinare, senza Jarvis a sinistra e con Jarvis a destra (js/prima-dopo.js) -->
+<section class="sezione" id="prima-dopo" data-atto="nucleo" aria-labelledby="t-prima-dopo">
+  <div class="contenitore">
+    <div class="testa-sezione rivela">
+      <span class="etichetta">Prima e dopo</span>
+      <h2 id="t-prima-dopo">Stessa giornata. <span class="luce">Trascina e guarda la differenza.</span></h2>
+      <p class="intro">A sinistra la giornata del titolare senza Jarvis: il telefono che squilla, i messaggi arretrati, l'agenda con i buchi. A destra la stessa giornata con Jarvis. Scegli il tuo mestiere e sposta la barra.</p>
+    </div>
+    <noscript><p class="pd-senza-js">Il confronto si muove nel tuo browser e serve JavaScript. In breve: senza Jarvis rincorri telefono, messaggi e agenda; con Jarvis le risposte sono pronte e tu dici solo sì o no.</p></noscript>
+    <div class="pd-banco rivela">
+      <div class="pd-mestieri" role="group" aria-label="Scegli il mestiere del confronto"></div>
+      <p class="pd-attivita"></p>
+      <div class="pd-palco">
+        <div class="pd-righe"></div>
+        <div class="pd-binario">
+          <div class="pd-maniglia" role="slider" tabindex="0" aria-label="Confronto: a sinistra senza Jarvis, a destra con Jarvis" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-describedby="pd-aiuto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></div>
+        </div>
+      </div>
+      <div class="pd-comandi">
+        <button class="pd-vai" type="button" data-pd-vai="100">Tutto senza</button>
+        <button class="pd-vai" type="button" data-pd-vai="50">Metà e metà</button>
+        <button class="pd-vai" type="button" data-pd-vai="0">Tutto con Jarvis</button>
+      </div>
+      <p class="pd-aiuto" id="pd-aiuto">Trascina la barra col dito o col mouse. Da tastiera: frecce sinistra e destra.</p>
+      <p class="pd-esempio">Esempio: una giornata tipo inventata, con attività, clienti e numeri di fantasia. Non è una misura né una promessa: serve a vedere la differenza. Nel Jarvis vero ogni messaggio al cliente parte solo dopo il tuo sì, e le chiamate restano a te.</p>
+      <p class="sr pd-annuncio" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
 <!-- 3. La squadra -->
 <section class="sezione" id="squadra" data-atto="nucleo" data-ancora=".orbita .centro" aria-labelledby="t-squadra">
   <div class="contenitore">
@@ -208,7 +285,49 @@
           <p class="esempio-compito" id="sr-esempio"></p>
         </div>
         <p class="nota-piccola" style="text-align:left;margin-top:16px">Squadra d'esempio: ruoli e numero di specialisti si decidono insieme, in base alla tua attività.</p>
+        <a class="btn vuoto piccolo" href="#al-lavoro" style="margin-top:14px">Guardala al lavoro</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3d. La squadra al lavoro: sala 3D con le postazioni (js/squadra-lavoro.js, 3D in js/squadra-3d.js), ripiego 2D -->
+<section class="sezione" id="al-lavoro" data-atto="nucleo" aria-labelledby="t-al-lavoro">
+  <div class="contenitore">
+    <div class="testa-sezione rivela">
+      <span class="etichetta">La squadra al lavoro</span>
+      <h2 id="t-al-lavoro">Tu chiedi una cosa. <span class="luce">Guarda chi si mette al lavoro.</span></h2>
+      <p class="intro">Una sala d'esempio: ogni specialista alla sua postazione, Jarvis al centro che affida i compiti, il revisore che ricontrolla, e alla fine tutto si ferma ad aspettare il tuo sì. Tocca uno specialista per sapere cosa fa.</p>
+    </div>
+    <noscript><p class="sl-senza-js">La sala si muove nel tuo browser e serve JavaScript. In breve: Jarvis affida il compito allo specialista giusto, il revisore ricontrolla, e niente esce senza il tuo sì.</p></noscript>
+    <div class="sl-banco rivela">
+      <div class="sl-profili" role="group" aria-label="Scegli il tipo di attività della sala"></div>
+      <div class="sl-zona">
+        <div class="sl-palco">
+          <canvas class="sl-tela" aria-hidden="true"></canvas>
+          <svg class="sl-fili" aria-hidden="true"></svg>
+          <div class="sl-centro" aria-hidden="true"><b>J</b><small>Jarvis</small></div>
+          <div class="sl-postazioni" role="group" aria-label="Specialisti d'esempio: scegline uno per sapere cosa fa"></div>
+        </div>
+        <div class="sl-lato">
+          <div class="sl-scheda">
+            <div class="sl-scheda-testa"><span class="sl-ico" aria-hidden="true"></span><div><h3 class="sl-nome">La sala</h3><p class="sl-stato"></p></div></div>
+            <p class="sl-fa">Tocca uno specialista nella sala per vedere cosa fa.</p>
+            <p class="sl-compito"></p>
+            <p class="sl-mai"></p>
+          </div>
+          <div class="sl-diario">
+            <p class="sl-diario-titolo">Cosa succede nella sala <span>(simulazione)</span></p>
+            <ol class="sl-registro" aria-live="off"></ol>
+            <div class="sl-comandi">
+              <button class="sl-pausa" type="button" aria-pressed="false">Ferma la sala</button>
+              <button class="sl-passo" type="button">Passo dopo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="sl-esempio">Esempio: una sala simulata nel tuo browser, con specialisti, compiti e nomi di fantasia. Non è il lavoro di un cliente vero né una misura. Ruoli e numero di specialisti si decidono insieme, in base alla tua attività; nel Jarvis vero niente parte verso un cliente senza il tuo sì.</p>
+      <p class="sr sl-annuncio" role="status" aria-live="polite"></p>
     </div>
   </div>
 </section>
@@ -479,7 +598,7 @@
       <ul class="promesse">
         <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Niente parte senza il tuo sì</b><span>Mail, messaggi, pubblicazioni, acquisti: prepara tutto, decidi tu. Nessuna azione verso l'esterno senza conferma.</span></div></li>
         <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Lavora a casa tua</b><span>Sul tuo computer, con un archivio di note che appartiene a te.</span></div></li>
-        <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>L'account è intestato a te</b><span>Usi un tuo account di intelligenza artificiale adatto all'uso professionale: quello che gli fai elaborare passa da quel servizio, con il tuo contratto. Nessun altro intermediario sui tuoi dati.</span></div></li>
+        <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>L'account è intestato a te</b><span>Usi un tuo account di intelligenza artificiale adatto all'uso professionale: quello che gli fai elaborare passa da quel servizio, con il tuo contratto. Nessun nostro server in mezzo; ogni altro servizio collegato, come la voce o la posta, si sceglie insieme e lo trovi scritto nel progetto.</span></div></li>
         <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Le password le scrivi tu</b><span>Accessi, codici e carte li inserisci sempre tu. Jarvis non li scrive e non li conserva.</span></div></li>
         <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Verifica prima di dire «fatto»</b><span>Può sbagliare, come chiunque. Per questo ogni lavoro si controlla con una prova prima di essere dichiarato concluso.</span></div></li>
       </ul>
@@ -506,6 +625,49 @@
   </div>
 </section>
 
+<!-- Prova a fregarmi: le domande più cattive, con risposte scritte prima (js/fregarmi-dati.js, js/fregarmi.js) -->
+<section class="sezione" id="fregarmi" data-atto="plancia" aria-labelledby="t-fregarmi">
+  <div class="contenitore">
+    <div class="testa-sezione rivela">
+      <span class="etichetta" style="color:var(--rosso)">Prova a fregarmi</span>
+      <h2 id="t-fregarmi">Fagli la domanda <span class="luce">più cattiva.</span></h2>
+      <p class="intro">Costi nascosti, dati, errori, dipendenti: scrivi il dubbio che ti fa dire «sì, vabbè». Le risposte sono scritte prima, a mano, una per una, e ognuna dice anche il suo limite. Qui non c'è un'intelligenza artificiale che improvvisa, e quello che scrivi non esce dal tuo browser.</p>
+    </div>
+    <div class="fr-zona">
+      <div class="fr-banco rivela">
+        <form class="fr-form" id="fr-form" novalidate>
+          <label class="fr-etichetta" for="fr-domanda">La tua domanda</label>
+          <div class="fr-riga">
+            <input id="fr-domanda" name="fr-domanda" type="text" maxlength="200" autocomplete="off" autocapitalize="sentences" spellcheck="false" enterkeyhint="send" placeholder="Per esempio: e se manda la mail sbagliata al cliente?" aria-describedby="fr-nota">
+            <button class="btn oro" type="submit">Mettilo alla prova</button>
+          </div>
+          <p class="fr-nota" id="fr-nota" aria-live="polite">Cerca tra le risposte preparate, dentro il tuo browser. Niente viene inviato né salvato.</p>
+        </form>
+        <div class="fr-scorciatoie" id="fr-scorciatoie" role="group" aria-label="Domande che fanno tutti"></div>
+        <div class="fr-risposta" id="fr-risposta"></div>
+        <p class="sr" id="fr-annuncio" role="status" aria-live="polite"></p>
+        <p class="fr-conta" id="fr-conta"></p>
+      </div>
+      <aside class="fr-muro-box rivela" aria-labelledby="t-fr-muro">
+        <h3 id="t-fr-muro">Cosa Jarvis <span>non farà mai.</span></h3>
+        <ol class="fr-muro" id="fr-muro">
+          <li data-mai="0">Mandare una mail, un messaggio o una pubblicazione senza il tuo sì.</li>
+          <li data-mai="1">Scrivere o conservare le tue password, i codici e i dati delle carte.</li>
+          <li data-mai="2">Comprare, pagare o spostare soldi da solo.</li>
+          <li data-mai="3">Dare diagnosi, dosi o consigli medici: passa la domanda a una persona.</li>
+          <li data-mai="4">Dare pareri legali o fiscali al posto di un professionista.</li>
+          <li data-mai="5">Usare i tuoi dati per pubblicità o venderli a qualcuno.</li>
+          <li data-mai="6">Dire «fatto» senza averlo controllato.</li>
+          <li data-mai="7">Prometterti un risultato garantito.</li>
+          <li data-mai="8">Decidere al posto tuo sulle persone: assunzioni, licenziamenti, chi lavora con te.</li>
+          <li data-mai="9">Fingersi una persona: quando scrive per te, è un tuo messaggio approvato da te.</li>
+        </ol>
+        <p class="fr-muro-nota">Sono le regole con cui ogni Jarvis viene costruito. Se una ti sembra scritta male, diccelo.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
 <!-- 10. Domande frequenti -->
 <section class="sezione" id="domande" data-atto="plancia" aria-labelledby="t-domande">
   <div class="contenitore">
@@ -523,6 +685,23 @@
       <details><summary>Devo saper programmare?</summary><p>No. Lo progetto, lo installo e lo configuro io. Tu gli parli come a un collaboratore.</p></details>
       <details><summary>Posso cominciare con poco?</summary><p>Sì. Si parte dai pezzi che ti servono subito, per esempio posta e preventivi, e si aggiunge il resto quando serve.</p></details>
       <details><summary>Fate anche app, siti e automazioni senza Jarvis?</summary><p>Sì. App, siti web, automazioni e contenuti video si possono chiedere anche da soli. Raccontaci cosa ti serve qui sotto.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- 10b. Il tuo piano Jarvis: scheda generata nel browser, stima con il calcolo a vista -->
+<section class="sezione" id="piano-jarvis" data-atto="plancia" aria-labelledby="t-piano-jarvis">
+  <div class="contenitore">
+    <div class="testa-sezione rivela">
+      <span class="etichetta" style="color:var(--oro)">Il tuo piano Jarvis</span>
+      <h2 id="t-piano-jarvis">Quanto tempo ti ridà, <span class="luce">fatti i conti?</span></h2>
+      <p class="intro">Scegli il tuo mestiere: escono le automazioni da cui partirei e una stima delle ore, con il calcolo sotto gli occhi. I numeri sono ipotesi: cambiali con i tuoi, poi scarica la scheda. Si fa tutto nel tuo browser e niente viene inviato, a meno che tu non scelga di mandarla a Manuel.</p>
+    </div>
+    <noscript><p class="pj-senza">La scheda si compone nel tuo browser e serve JavaScript. Puoi sempre scrivere a Manuel qui sotto.</p></noscript>
+    <div class="pj-banco rivela" id="pj-banco">
+      <div class="pj-mestieri" id="pj-mestieri" role="group" aria-labelledby="pj-scegli"><p class="pj-cap" id="pj-scegli">1 · Il tuo mestiere</p></div>
+      <div class="pj-corpo" id="pj-corpo"></div>
+      <p class="sr" id="pj-annuncio" role="status" aria-live="polite"></p>
     </div>
   </div>
 </section>
@@ -670,14 +849,27 @@
   </div>
 </footer>
 
+<!-- Scheda del piano da stampare: si riempie solo quando il visitatore preme «Stampa o salva in PDF» -->
+<div class="pj-stampa" id="pj-stampa"></div>
+
 <script src="js/config.js"></script>
 <script src="js/profili.js"></script>
+<script src="js/demo-dati.js"></script>
 <script src="js/modulo.js"></script>
 <script src="js/sito.js"></script>
 <script src="js/piano.js"></script>
 <script src="js/pannello.js"></script>
 <script src="js/suono.js"></script>
 <script src="js/vivo.js"></script>
+<script src="js/giornata-dati.js"></script>
+<script src="js/giornata-mestiere.js"></script>
+<script src="js/fregarmi-dati.js"></script>
+<script src="js/fregarmi.js"></script>
+<script src="js/piano-jarvis-dati.js"></script>
+<script src="js/piano-jarvis.js"></script>
+<script src="js/prima-dopo-dati.js"></script>
+<script src="js/prima-dopo.js"></script>
+<script src="js/squadra-lavoro.js"></script>
 <script src="js/studio.js"></script>
 <script src="js/scena/avvio.js"></script>
 <script src="js/costruzione/avvio.js"></script>

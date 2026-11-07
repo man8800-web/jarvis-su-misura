@@ -82,14 +82,18 @@
       o.connect(g); g.connect(master); o.start(t); o.stop(t + 3.3);
     });
   }
+  // solo voci italiane del dispositivo: le voci «di rete» (per esempio quelle Google di Chrome)
+  // manderebbero la frase, nome del visitatore compreso, ai server di chi le fornisce
+  function voceLocale() {
+    return speechSynthesis.getVoices().filter(function (v) { return /^it/i.test(v.lang) && v.localService; })[0] || null;
+  }
   function di(frase) {
     if (!parlaOn || !('speechSynthesis' in window)) return;
     try {
       speechSynthesis.cancel();
+      var v = voceLocale(); if (!v) return;
       var u = new SpeechSynthesisUtterance(frase);
-      u.lang = 'it-IT'; u.rate = 0.98; u.pitch = 0.9; u.volume = 0.9;
-      var voci = speechSynthesis.getVoices().filter(function (v) { return /^it/i.test(v.lang); });
-      if (voci.length) u.voice = voci[0];
+      u.voice = v; u.lang = v.lang; u.rate = 0.98; u.pitch = 0.9; u.volume = 0.9;
       speechSynthesis.speak(u);
     } catch (e) { /* senza voce non cambia nulla */ }
   }
@@ -105,6 +109,12 @@
   interruttore(btnVoce, 'Voce', function () { return parlaOn; }, function (v) { parlaOn = v; });
   interruttore(btnSuono, 'Suono', function () { return suonoOn; }, function (v) { suonoOn = v; });
   if (!('speechSynthesis' in window)) { btnVoce.hidden = true; }
+  else {
+    // il pulsante compare solo se il dispositivo ha una voce italiana sua (le voci arrivano anche dopo)
+    var controllaVoce = function () { btnVoce.hidden = !voceLocale(); };
+    controllaVoce();
+    if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', controllaVoce);
+  }
   if (!AC) { btnSuono.hidden = true; }
 
   /* ---------- la scena si carica quando la sezione è vicina ---------- */

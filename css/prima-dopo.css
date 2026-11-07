@@ -1,0 +1,114 @@
+/* «Prima e dopo»: barra da trascinare. Fondi pieni (non trasparenti) per il contrasto sopra la scena 3D.
+   Ogni riga ha le due versioni nella stessa cella; la versione «con» è ritagliata da --x (posizione della barra).
+   La versione «con» è specchiata (numeri e testi a destra), così a metà barra si leggono tutte e due le cifre. */
+#prima-dopo{--c:var(--ciano);--male:#ff7a6b}
+.pd-banco{position:relative;border-radius:24px;border:1px solid var(--filo2);background:linear-gradient(170deg,rgba(14,22,40,.96),rgba(4,7,16,.97));box-shadow:0 40px 120px -50px color-mix(in srgb,var(--c) 40%,transparent);padding:clamp(18px,3vw,34px)}
+.pd-senza-js{padding:18px;border-radius:16px;background:#050a14;color:var(--testo)}
+.pd-mestieri{display:flex;flex-wrap:wrap;gap:8px}
+.pd-chip{--c:var(--ciano);min-height:44px;padding:9px 16px;border-radius:999px;border:1px solid var(--filo2);background:rgba(2,4,12,.9);color:var(--testo);font:500 14.5px/1.3 var(--sans);cursor:pointer;transition:border-color .2s,background .2s}
+.pd-chip:hover{border-color:var(--c)}
+.pd-chip[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,#050a14);box-shadow:0 0 0 1px var(--c) inset}
+.pd-attivita{margin:16px 0 12px;font:600 12.5px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--tenue)}
+
+/* il palco: niente overflow:hidden qui, altrimenti la maniglia «appiccicata» non segue lo scorrimento */
+.pd-palco{--x:50%;--sposta:0px;position:relative;touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:ew-resize}
+.pd-righe{border-radius:18px;overflow:hidden;border:1px solid var(--filo2);isolation:isolate}
+.pd-riga{display:grid}
+.pd-riga+.pd-riga .pd-lato{border-top:1px solid rgba(140,200,255,.12)}
+.pd-lato{grid-area:1/1;min-width:0;padding:16px clamp(14px,2.4vw,24px)}
+.pd-senza{background:#0d0a10;color:#d9dde4}
+.pd-con{background:color-mix(in srgb,var(--c) 7%,#040a14);clip-path:inset(0 0 0 var(--x));text-align:right}
+.pd-trascina .pd-con,.pd-trascina .pd-binario{will-change:clip-path,left}
+
+/* intestazione */
+.pd-intesta .pd-lato{display:flex;flex-direction:column;gap:2px;padding-top:14px;padding-bottom:14px}
+.pd-intesta .pd-con{align-items:flex-end}
+.pd-lato-nome{font:800 clamp(18px,2.4vw,24px)/1.15 var(--sans);letter-spacing:-.01em}
+.pd-senza .pd-lato-nome{color:var(--male)}
+.pd-con .pd-lato-nome{color:var(--c)}
+.pd-lato-ora{font:500 12.5px/1.3 var(--mono);color:var(--tenue)}
+
+/* telefono e messaggi */
+.pd-blocco-testa{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px}
+/* a metà barra numero e titolo di ogni lato stanno nella loro metà: si leggono puliti tutti e due */
+.pd-intesta .pd-lato>*,.pd-tel .pd-blocco-testa,.pd-posta .pd-blocco-testa,.pd-agenda .pd-blocco-testa,.pd-sera{max-width:calc(50% - 30px)}
+.pd-con .pd-blocco-testa,.pd-con.pd-lato>.pd-sera{margin-left:auto}
+.pd-con .pd-blocco-testa{flex-direction:row-reverse}
+.pd-ico{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(140,200,255,.16)}
+.pd-ico svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pd-senza .pd-ico{color:var(--male);border-color:color-mix(in srgb,var(--male) 35%,transparent)}
+.pd-con .pd-ico{color:var(--c);border-color:color-mix(in srgb,var(--c) 40%,transparent)}
+.pd-num{font:800 clamp(30px,4.4vw,44px)/1 var(--sans);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.pd-senza .pd-num{color:var(--male)}
+.pd-con .pd-num{color:var(--c)}
+.pd-cosa{font-weight:700;font-size:16.5px;line-height:1.25;color:var(--testo)}
+.pd-desc{margin:8px 0 0;font-size:14.5px;line-height:1.5;color:var(--tenue)}
+.pd-con .pd-desc{color:#c3d0de}
+
+/* lo squillo: solo col movimento permesso e solo quando il riquadro si vede */
+@media (prefers-reduced-motion:no-preference){
+  .pd-vivo .pd-squilla svg{animation:pd-squilla 2.4s ease-in-out infinite;transform-origin:50% 60%}
+  .pd-vivo .pd-squilla{animation:pd-anello 2.4s ease-out infinite}
+}
+@keyframes pd-squilla{0%,40%,100%{transform:none}4%,12%,20%,28%{transform:rotate(-14deg)}8%,16%,24%,32%{transform:rotate(14deg)}}
+@keyframes pd-anello{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--male) 55%,transparent)}35%,100%{box-shadow:0 0 0 12px transparent}}
+
+/* agenda */
+.pd-conto{font:700 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:6px 9px;border-radius:999px}
+.pd-conto.male{color:#1a0705;background:var(--male)}
+.pd-conto.bene{color:#02131a;background:var(--c)}
+/* le righe degli orari: niente bordo tra una e l'altra, come una lista */
+.pd-slot-riga .pd-lato{padding-top:0;padding-bottom:6px}
+.pd-slot-riga.ultima .pd-lato{padding-bottom:16px}
+.pd-riga+.pd-slot-riga .pd-lato{border-top:0}
+.pd-agenda .pd-lato{padding-bottom:12px}
+.pd-s{height:100%;display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;min-height:44px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(140,200,255,.12);font-size:14.5px;line-height:1.35}
+.pd-con .pd-s{flex-direction:row-reverse}
+.pd-s-ora{flex:none;min-width:3.4em;font:700 13px/1.2 var(--mono);color:var(--tenue)}
+.pd-s-t{order:2;flex:1 1 9em;min-width:0;color:var(--testo)}
+.pd-s-stato{order:1;flex:none;font:700 11.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px}
+.pd-s.buco{background:repeating-linear-gradient(135deg,rgba(255,122,107,.10) 0 8px,rgba(255,122,107,.03) 8px 16px);border:1px dashed color-mix(in srgb,var(--male) 70%,transparent)}
+.pd-s.buco .pd-s-t{color:#ffd4ce}
+.pd-s.buco .pd-s-stato,.pd-s.doppio .pd-s-stato{color:#1a0705;background:var(--male)}
+.pd-s.doppio{background:rgba(255,159,67,.10);border:1px solid rgba(255,159,67,.6)}
+.pd-s.doppio .pd-s-stato{background:var(--arancio)}
+.pd-s.jarvis{background:color-mix(in srgb,var(--c) 14%,#050a14);border-color:color-mix(in srgb,var(--c) 55%,transparent)}
+.pd-s.jarvis .pd-s-stato{color:#02131a;background:var(--c)}
+.pd-s.tuo{border-color:rgba(243,205,115,.55);background:rgba(243,205,115,.07)}
+.pd-s.tuo .pd-s-stato{color:#1a1204;background:var(--oro)}
+
+/* fine giornata */
+.pd-sera{display:flex;align-items:center;gap:10px;margin:0;font-weight:600;font-size:15px;line-height:1.4;color:var(--testo)}
+.pd-con .pd-sera{flex-direction:row-reverse}
+.pd-sera .pd-ico{width:34px;height:34px}
+
+/* la barra: la linea è su --x, la maniglia resta a metà schermo mentre si scorre il confronto */
+.pd-binario{position:absolute;top:0;bottom:0;left:var(--x);width:0;z-index:2;pointer-events:none}
+.pd-binario::after{content:"";position:absolute;top:0;bottom:0;right:1px;width:26px;background:linear-gradient(90deg,transparent,rgba(2,3,10,.55))}
+.pd-binario::before{content:"";position:absolute;top:0;bottom:0;left:-1px;width:2px;background:linear-gradient(var(--male),#fff 50%,var(--c));box-shadow:0 0 14px rgba(255,255,255,.35)}
+.pd-maniglia{position:sticky;top:calc(50vh - 26px);margin:40px 0 40px calc(-26px + var(--sposta));width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#f5f8fc;color:#06101c;border:3px solid var(--c);box-shadow:0 8px 28px rgba(0,0,0,.55),0 0 0 6px rgba(255,255,255,.08);pointer-events:auto;cursor:grab;touch-action:none;transition:transform .15s}
+.pd-maniglia svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pd-trascina .pd-maniglia{cursor:grabbing;transform:scale(1.08)}
+.pd-maniglia:focus{outline:none}
+.pd-maniglia:focus-visible{box-shadow:0 0 0 4px var(--oro),0 8px 28px rgba(0,0,0,.55)}
+
+.pd-comandi{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.pd-vai{min-height:44px;padding:9px 16px;border-radius:999px;border:1px solid var(--filo2);background:rgba(2,4,12,.9);color:var(--testo);font:500 14px/1.3 var(--sans);cursor:pointer}
+.pd-vai:hover{border-color:var(--c)}
+.pd-aiuto{margin:12px 0 0;font-size:13.5px;color:var(--tenue)}
+.pd-esempio{margin:10px 0 0;padding:12px 14px;border-radius:12px;background:rgba(243,205,115,.08);border-left:3px solid var(--oro);font-size:14px;color:var(--testo)}
+
+/* telefono: a metà barra restano numeri, titoli, orari e colori; i testi lunghi compaiono trascinando verso un lato */
+@media (max-width:700px){
+  .pd-senza .pd-desc,.pd-senza .pd-s-t{opacity:clamp(0,calc((var(--xn,50) - 55) / 15),1)}
+  .pd-con .pd-desc,.pd-con .pd-s-t{opacity:clamp(0,calc((45 - var(--xn,50)) / 15),1)}
+}
+@media (max-width:520px){
+  .pd-banco{border-radius:18px}
+  .pd-lato{padding:14px 12px}
+  .pd-ico{width:36px;height:36px}
+  .pd-s{padding:8px 10px;font-size:14px}
+  .pd-s{gap:5px 8px}
+  .pd-s-ora{flex-basis:100%;min-width:0}   /* orario sopra, bollino sotto: a metà barra entrano nella loro metà */
+  .pd-vai{flex:1 1 auto}
+}

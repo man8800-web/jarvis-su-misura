@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Jarvis su misura | L'assistente che lavora per la tua attività</title>
-<meta name="description" content="Un assistente con intelligenza artificiale costruito su misura: gli parli, ricorda tutto, lavora sul tuo computer e sul telefono, con una squadra di specialisti costruita per il tuo lavoro. Le azioni importanti partono solo con il tuo sì.">
+<meta name="description" content="Un assistente con intelligenza artificiale costruito su misura: gli parli, ricorda quello che gli affidi, lavora sul tuo computer e sul telefono, con una squadra di specialisti costruita per il tuo lavoro. Le azioni importanti partono solo con il tuo sì.">
 <meta name="theme-color" content="#02030a">
 <meta property="og:title" content="Jarvis su misura. Non un chatbot: un socio che lavora.">
 <meta property="og:description" content="Assistente con intelligenza artificiale costruito su misura per la tua attività. Niente parte senza il tuo sì.">
@@ -22,13 +22,16 @@
 <!-- Indirizzo definitivo da inserire quando il sito va online: [URL DEL SITO] -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Jarvis su misura","description":"Assistenti con intelligenza artificiale, app, siti e automazioni costruiti su misura.","areaServed":"IT","address":{"@type":"PostalAddress","addressLocality":"Roma","addressCountry":"IT"}}</script>
 <meta property="og:type" content="website">
+<link rel="preload" href="media/caratteri/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/stile.css">
+<link rel="stylesheet" href="css/assemblaggio.css">
+<noscript><style>.rivela{opacity:1;transform:none}.soglia{min-height:0;padding-top:12vh;padding-bottom:12vh}.soglia-frase{position:static;margin:0 auto}.vivo-zona,.comandi,.suono-interr,.trasforma-zona,.squadra-zona,.profilo-attivo,.lettore,.console{display:none}</style></noscript>
 </head>
 <body>
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <!-- Pulsante WhatsApp: compare solo se whatsappNumero in js/config.js non è vuoto -->
-<a class="whatsapp" id="whatsapp" href="#" target="_blank" rel="noopener" hidden aria-label="Scrivi su WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4a12 12 0 00-10.3 18.1L4 28l6.1-1.6A12 12 0 1016 4z"/><path d="M11.5 10.5c.4-.8 1-.8 1.4-.8l1 .1 1.3 3-.9 1.3c.8 1.6 2 2.8 3.6 3.6l1.3-.9 3 1.3c0 .6-.2 1.3-.8 1.8-.8.6-1.9.8-3.2.3-3.3-1.2-5.8-3.7-7-7-.3-1-.2-2 .3-2.7z" class="pieno"/></svg><span>WhatsApp</span></a>
-<div class="fondo-riserva" aria-hidden="true"></div>
+<a class="whatsapp" id="pulsante-whatsapp" href="#" target="_blank" rel="noopener" hidden aria-label="Scrivi su WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4a12 12 0 00-10.3 18.1L4 28l6.1-1.6A12 12 0 1016 4z"/><path d="M11.5 10.5c.4-.8 1-.8 1.4-.8l1 .1 1.3 3-.9 1.3c.8 1.6 2 2.8 3.6 3.6l1.3-.9 3 1.3c0 .6-.2 1.3-.8 1.8-.8.6-1.9.8-3.2.3-3.3-1.2-5.8-3.7-7-7-.3-1-.2-2 .3-2.7z" class="pieno"/></svg><span>WhatsApp</span></a>
+<div class="fondo-riserva" aria-hidden="true"><span class="poster p-nucleo"></span><span class="poster p-galassia"></span><span class="poster p-plancia"></span></div>
 <canvas id="galassia" aria-hidden="true"></canvas>
 <div class="griglia-hud" aria-hidden="true"></div>
 <div class="vignetta" aria-hidden="true"></div>
@@ -49,45 +52,57 @@
       <li><a href="#domande">Domande</a></li>
     </ul>
   </nav>
+  <button class="suono-interr" id="suono" type="button" aria-pressed="false" hidden><span class="barre" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="suono-parola">Suono<span class="suono-sep" aria-hidden="true"> · </span><span class="sr">: </span><span class="suono-stato">spento</span></span></button>
   <a class="btn piccolo" href="#scrivi">Scrivi a Jarvis</a>
 </header>
 
 <main id="contenuto">
 
 <!-- 1. Apertura -->
-<section class="apertura" id="apertura" aria-labelledby="titolo">
+<section class="apertura" id="apertura" data-atto="nucleo" data-ancora=".palco" aria-labelledby="titolo">
   <div class="contenitore">
     <div>
-      <span class="stato-sistemi"><i aria-hidden="true"></i>Tutti i sistemi online</span>
-      <h1 id="titolo"><span class="riga"><span>Non un programma uguale per tutti.</span></span><span class="riga"><span>Il tuo Jarvis.</span></span></h1>
-      <p class="sotto">Un assistente con intelligenza artificiale costruito sulle tue esigenze, sul tuo lavoro e sulla tua vita, che si adatta a te. Gli parli, ricorda, prepara il lavoro sul computer e ti segue sul telefono. Le cose importanti partono solo con il tuo sì.</p>
+      <span class="stato-sistemi"><i aria-hidden="true"></i>Progettato intorno a te</span>
+      <h1 id="titolo"><span class="riga"><span>Il tuo lavoro ha una forma.</span></span><span class="riga"><span>Diamo forma a Jarvis.</span></span></h1>
+      <p class="sotto">Un assistente costruito sul tuo modo di lavorare: ascolta, organizza e prepara. La tecnologia si adatta alla tua giornata, non il contrario. E le decisioni importanti restano tue.</p>
+      <div class="vivo-zona">
+        <form class="vivo-form" id="vivo" autocomplete="off">
+          <label class="vivo-etichetta" for="vivo-testo"><i aria-hidden="true"></i>Prova adesso: dimmi che lavoro fai o cosa ti serve</label>
+          <div class="vivo-riga">
+            <span class="vivo-prompt" aria-hidden="true">&gt;</span>
+            <input id="vivo-testo" name="vivo" type="text" maxlength="160" enterkeyhint="send" spellcheck="false" placeholder="Per esempio: ho un ristorante e perdo ore al telefono">
+            <button class="vivo-mic" id="vivo-mic" type="button" aria-pressed="false" aria-label="Parla con Jarvis" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button>
+            <button class="vivo-invia" type="submit" aria-label="Chiedi a Jarvis"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+          </div>
+          <div class="vivo-suggerimenti" id="vivo-suggerimenti" role="group" aria-label="Oppure prova con">
+            <button type="button">Ho un ristorante</button>
+            <button type="button">Sono un avvocato</button>
+            <button type="button" data-frase="Faccio l'idraulico">Sono idraulico</button>
+            <button type="button">Quanto costa?</button>
+            <button type="button" data-frase="Dove finiscono i miei dati?">I miei dati?</button>
+          </div>
+        </form>
+        <div class="vivo-risposta" id="vivo-risposta" hidden></div>
+        <p class="sr" id="vivo-annuncio" aria-live="polite"></p>
+      </div>
       <div class="azioni">
         <a class="btn" href="#scrivi">Scrivi a Jarvis</a>
         <a class="btn vuoto" href="#ascolta">Ascolta la sua voce</a>
       </div>
     </div>
-    <figure class="cornice" style="margin:0">
-      <span class="angolo a1" aria-hidden="true"></span><span class="angolo a2" aria-hidden="true"></span><span class="angolo a3" aria-hidden="true"></span><span class="angolo a4" aria-hidden="true"></span>
-      <div class="dentro">
-        <!-- SEGNAPOSTO: il video di apertura si attiva da js/config.js (media.video), vedi media/LEGGIMI.md -->
-        <video id="video-apertura" autoplay muted loop playsinline preload="metadata" aria-label="Video di presentazione di Jarvis"></video>
-        <div class="attesa">
-          <div>
-            <div class="anelli" aria-hidden="true"><i></i><i></i><i></i></div>
-            <p>Jarvis<br>in ascolto</p>
-          </div>
-        </div>
-        <div class="righe" aria-hidden="true"></div>
-        <div class="dati" aria-hidden="true"><span><b>&#9679;</b> In onda</span><span>Jarvis</span></div>
-      </div>
-      <figcaption class="sr">Video di presentazione di Jarvis</figcaption>
-    </figure>
+    <div class="palco" data-palco>
+      <div class="nucleo-css" aria-hidden="true"><i></i><i></i><i></i></div>
+      <button class="btn vuoto piccolo muovi" type="button" id="muovi-telefono" aria-pressed="false" hidden>Muovi il telefono</button>
+    </div>
   </div>
   <span class="scorri" aria-hidden="true">SCORRI</span>
 </section>
 
+<!-- Tratto di volo: il tuffo dentro il nucleo -->
+<section class="soglia" id="soglia-nucleo" data-atto="nucleo"><p class="soglia-frase">Dentro c'è il tuo modo di lavorare.</p></section>
+
 <!-- 2. Ognuno il suo Jarvis -->
-<section class="sezione" id="trasforma" aria-labelledby="t-trasforma">
+<section class="sezione" id="trasforma" data-atto="nucleo" data-ancora="#forma" aria-labelledby="t-trasforma">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">Ognuno il suo Jarvis</span>
@@ -110,7 +125,7 @@
 </section>
 
 <!-- 3. Una giornata con Jarvis -->
-<section class="sezione" id="giornata" aria-labelledby="t-giornata">
+<section class="sezione" id="giornata" data-atto="nucleo" data-ancora="linea" aria-labelledby="t-giornata">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">Una giornata con Jarvis</span>
@@ -137,7 +152,7 @@
       </article>
       <article class="momento rivela" style="--c:var(--arancio)"><span class="punto" aria-hidden="true"></span>
         <span class="ora">12:00</span><h3>I post della settimana, pronti</h3>
-        <p>Prepara i post per i tuoi social e li mette in calendario dopo il tuo ok. Ai commenti semplici, come un grazie, risponde lui.</p>
+        <p>Prepara i post per i tuoi social e li mette in calendario dopo il tuo ok. Anche le risposte ai commenti, come un grazie, sono pronte e aspettano il tuo sì.</p>
         <div class="schermino" aria-hidden="true"><span class="k">&gt; social</span><br>5 post pronti per la settimana<br><span class="ok">in attesa del tuo ok</span></div>
       </article>
       <article class="momento rivela" style="--c:var(--rosa)"><span class="punto" aria-hidden="true"></span>
@@ -146,7 +161,7 @@
         <div class="schermino" aria-hidden="true"><span class="k">&gt; risposta per Giulia</span><br>«Giovedì va benissimo, alle 10 da te.»<br><span class="ok">la mando? [ sì ] [ no ]</span></div>
       </article>
       <article class="momento rivela" style="--c:var(--viola)"><span class="punto" aria-hidden="true"></span>
-        <span class="ora">16:00</span><h3>Il prezzo migliore, prima di comprare</h3>
+        <span class="ora">16:00</span><h3>I prezzi a confronto, prima di comprare</h3>
         <p>Vuoi una lavatrice nuova? Confronta modelli e prezzi e ti dice dove conviene. L'acquisto lo confermi sempre tu.</p>
         <div class="schermino" aria-hidden="true"><span class="k">&gt; confronto lavatrici</span><br>3 modelli, 5 negozi<br><span class="ok">il più conveniente in cima alla lista</span></div>
       </article>
@@ -171,7 +186,7 @@
 </section>
 
 <!-- 3. La squadra -->
-<section class="sezione" id="squadra" aria-labelledby="t-squadra">
+<section class="sezione" id="squadra" data-atto="nucleo" data-ancora=".orbita .centro" aria-labelledby="t-squadra">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">La squadra</span>
@@ -199,7 +214,7 @@
 </section>
 
 <!-- 4. Cosa sa fare -->
-<section class="sezione" id="poteri" aria-labelledby="t-poteri">
+<section class="sezione" id="poteri" data-atto="nucleo" aria-labelledby="t-poteri">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">Cosa sa fare</span>
@@ -212,7 +227,7 @@
       </article>
       <article class="potere rivela" style="--c:var(--oro)">
         <div class="vista" aria-hidden="true"><svg class="nodi" width="180" height="110" viewBox="0 0 180 110"><line x1="20" y1="80" x2="70" y2="30"/><line x1="70" y1="30" x2="120" y2="70"/><line x1="120" y1="70" x2="160" y2="25"/><line x1="70" y1="30" x2="160" y2="25"/><line x1="20" y1="80" x2="120" y2="70"/><line x1="120" y1="70" x2="95" y2="100"/><circle cx="20" cy="80" r="5"/><circle cx="70" cy="30" r="6"/><circle cx="120" cy="70" r="7"/><circle cx="160" cy="25" r="5"/><circle cx="95" cy="100" r="4"/></svg></div>
-        <h3>Memoria che non dimentica</h3><p>Cosa hai deciso col cliente, dove sta la bolletta, il regalo che volevi fare. Non rispieghi niente due volte.</p>
+        <h3>Memoria che resta</h3><p>Cosa hai deciso col cliente, dove sta la bolletta, il regalo che volevi fare: resta scritto nel tuo archivio, così non devi rispiegarlo ogni volta.</p>
       </article>
       <article class="potere rivela" style="--c:var(--menta)">
         <div class="vista" aria-hidden="true"><div class="finestra"><b></b><b></b><span class="tasto"></span><svg viewBox="0 0 24 24"><path d="M4 2l15 10-7 1.5L9 21z" fill="#fff" stroke="#03140b" stroke-width="1.2"/></svg></div></div>
@@ -234,8 +249,57 @@
   </div>
 </section>
 
+<!-- Il tuo Jarvis: si assembla mentre racconti cosa ti serve -->
+<section class="sezione assembla" id="assemblaggio" data-atto="nucleo" aria-labelledby="t-assembla">
+  <div class="contenitore">
+    <div class="testa-sezione rivela">
+      <span class="etichetta">Il tuo Jarvis</span>
+      <h2 id="t-assembla">Racconta cosa ti serve. <span class="luce">Lo assembliamo adesso.</span></h2>
+      <p class="intro">Ogni pezzo che si aggancia è un tuo progetto. Quando ha finito, il tuo Jarvis è pronto a diventare il tuo assistente.</p>
+    </div>
+    <div class="banco rivela" id="banco">
+      <div class="colonna-testo">
+        <form id="assembla-form" novalidate>
+          <label for="assembla-testo">Cosa vuoi che faccia per te?</label>
+          <textarea id="assembla-testo" maxlength="400" rows="4" placeholder="Per esempio: faccio il commercialista a Torino. Voglio che tenga l'agenda, smisti la posta e prepari i preventivi."></textarea>
+          <label for="assembla-nome">Come ti chiami? (facoltativo)</label>
+          <input id="assembla-nome" type="text" maxlength="40" autocomplete="off">
+          <div class="riga-comandi">
+            <button type="submit" class="btn oro" id="assembla-via">Assembla il mio Jarvis</button>
+            <button type="button" class="btn vuoto" id="assembla-voce" aria-pressed="false">Voce: spenta</button>
+            <button type="button" class="btn vuoto" id="assembla-suono" aria-pressed="false">Suono: spento</button>
+          </div>
+          <p class="nota-piccola">Tutto avviene sul tuo schermo: quello che scrivi qui non viene inviato a nessuno. Le luci seguono l'ora del tuo orologio.</p>
+        </form>
+        <ol class="moduli" id="assembla-moduli" aria-live="polite" aria-label="Moduli del tuo Jarvis"></ol>
+      </div>
+      <div class="colonna-scena">
+        <div class="scena-quadro">
+          <canvas id="assembla-tela" aria-hidden="true"></canvas>
+          <div class="telemetria" aria-hidden="true">
+            <span id="assembla-stato">IN ATTESA DELLA RICHIESTA</span>
+            <span id="assembla-orologio">T+ 00:00</span>
+          </div>
+        </div>
+        <div class="biglietto" id="assembla-biglietto" hidden role="region" aria-label="Il tuo Jarvis è pronto">
+          <span class="firma-m">Jarvis</span>
+          <p class="b-titolo" id="assembla-b-titolo">Pronto.</p>
+          <p class="b-corpo" id="assembla-b-corpo"></p>
+          <div class="b-azioni">
+            <a class="btn oro" id="assembla-andiamo" href="#scrivi">Andiamo</a>
+            <button type="button" class="btn vuoto" id="assembla-stampa">Stampa la configurazione</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tratto di volo: dal nucleo alla galassia -->
+<section class="soglia" id="soglia-galassia" data-atto="galassia"><p class="soglia-frase">Attorno al nucleo, tutto quello che possiamo costruirti.</p></section>
+
 <!-- 5. Cosa costruiamo per te -->
-<section class="sezione" id="servizi" aria-labelledby="t-servizi">
+<section class="sezione" id="servizi" data-atto="galassia" aria-labelledby="t-servizi">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">Cosa costruiamo per te</span>
@@ -274,7 +338,7 @@
         <a class="btn vuoto" href="#scrivi" data-tema="Un sito web su misura">Parliamone</a>
       </article>
       <article class="servizio rivela" style="--c:var(--menta)">
-        <div class="disegno d-flusso" aria-hidden="true"><svg viewBox="0 0 250 130"><path d="M50 30 C 110 30, 110 65, 160 65 S 200 100, 220 100"/><path class="scorre" d="M50 30 C 110 30, 110 65, 160 65 S 200 100, 220 100"/><path d="M50 100 C 100 100, 110 65, 160 65"/><path class="scorre" style="animation-delay:-1.4s" d="M50 100 C 100 100, 110 65, 160 65"/><rect x="8" y="18" width="62" height="24" rx="6"/><text x="17" y="34">richiesta</text><rect x="8" y="88" width="62" height="24" rx="6"/><text x="22" y="104">listino</text><rect x="128" y="53" width="66" height="24" rx="6"/><text x="135" y="69">preventivo</text><rect x="190" y="88" width="56" height="24" rx="6"/><text x="200" y="104">la tua ok</text></svg></div>
+        <div class="disegno d-flusso" aria-hidden="true"><svg viewBox="0 0 250 130"><path d="M50 30 C 110 30, 110 65, 160 65 S 200 100, 220 100"/><path class="scorre" d="M50 30 C 110 30, 110 65, 160 65 S 200 100, 220 100"/><path d="M50 100 C 100 100, 110 65, 160 65"/><path class="scorre" style="animation-delay:-1.4s" d="M50 100 C 100 100, 110 65, 160 65"/><rect x="8" y="18" width="62" height="24" rx="6"/><text x="17" y="34">richiesta</text><rect x="8" y="88" width="62" height="24" rx="6"/><text x="22" y="104">listino</text><rect x="128" y="53" width="66" height="24" rx="6"/><text x="135" y="69">preventivo</text><rect x="190" y="88" width="56" height="24" rx="6"/><text x="200" y="104">il tuo ok</text></svg></div>
         <div>
           <h3>Automazioni e programmi</h3>
           <p class="forte">Il lavoro ripetitivo lo fa la macchina. Tu firmi.</p>
@@ -298,7 +362,7 @@
 </section>
 
 <!-- 5b. Esempi per il tuo lavoro -->
-<section class="sezione" id="esempi" aria-labelledby="t-esempi">
+<section class="sezione" id="esempi" data-atto="galassia" aria-labelledby="t-esempi">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">Esempi per il tuo lavoro</span>
@@ -307,9 +371,9 @@
     </div>
     <div style="display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
       <a class="scheda-reparto rivela" href="esempi/salute/" style="--c:#16a596;text-decoration:none;color:inherit;min-height:0">
-        <div class="num">01<small>Salute</small></div><h3>Studi di osteopatia e fisioterapia</h3><p>Pazienti che prenotano anche di sera, promemoria, valutazioni prima e dopo.</p><span class="btn vuoto">Apri l'esempio</span></a>
+        <div class="num">01<small>Salute</small></div><h3>Studi di osteopatia e fisioterapia</h3><p>Richieste anche di sera, promemoria pronti, comunicazione chiara per i pazienti.</p><span class="btn vuoto">Apri l'esempio</span></a>
       <a class="scheda-reparto rivela" href="esempi/ristorante/" style="--c:#cf6a3f;text-decoration:none;color:inherit;min-height:0">
-        <div class="num">02<small>Ristorazione</small></div><h3>Ristoranti e trattorie</h3><p>Tavoli prenotati su WhatsApp, sala piena anche il martedì, allergie dritte in cucina.</p><span class="btn vuoto">Apri l'esempio</span></a>
+        <div class="num">02<small>Ristorazione</small></div><h3>Ristoranti e trattorie</h3><p>Tavoli prenotati su WhatsApp, una proposta pronta per i giorni vuoti, allergie segnate per la cucina.</p><span class="btn vuoto">Apri l'esempio</span></a>
       <a class="scheda-reparto rivela" href="esempi/studio-legale/" style="--c:#b08d57;text-decoration:none;color:inherit;min-height:0">
         <div class="num">03<small>Professioni</small></div><h3>Studi legali e professionali</h3><p>Scadenze sotto controllo, posta smistata, bozze pronte da rivedere.</p><span class="btn vuoto">Apri l'esempio</span></a>
     </div>
@@ -317,7 +381,7 @@
 </section>
 
 <!-- 6. Ascolta Jarvis -->
-<section class="sezione" id="ascolta" aria-labelledby="t-ascolta">
+<section class="sezione" id="ascolta" data-atto="galassia" aria-labelledby="t-ascolta">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">Ascolta Jarvis</span>
@@ -343,7 +407,7 @@
 </section>
 
 <!-- 7. Jarvis in tasca -->
-<section class="sezione" id="tasca" aria-labelledby="t-tasca">
+<section class="sezione" id="tasca" data-atto="galassia" aria-labelledby="t-tasca">
   <div class="contenitore tasca-zona">
     <div class="iphone rivela" id="iphone" aria-hidden="true">
       <div class="schermo">
@@ -364,7 +428,7 @@
         <p class="intro">L'app per iPhone è lo stesso Jarvis, ovunque tu sia.</p>
       </div>
       <ul class="tasca-elenco">
-        <li class="rivela" style="--c:var(--ciano)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></span><div><b>Gli parli a voce</b><span>Fai una domanda o dai un incarico mentre cammini o guidi.</span></div></li>
+        <li class="rivela" style="--c:var(--ciano)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></span><div><b>Gli parli a voce</b><span>Fai una domanda o dai un incarico mentre cammini o hai le mani occupate.</span></div></li>
         <li class="rivela" style="--c:var(--oro)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4zM10 21h4"/></svg></span><div><b>Ti avvisa</b><span>Un lavoro lungo finito, una mail importante, una scadenza vicina.</span></div></li>
         <li class="rivela" style="--c:var(--menta)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg></span><div><b>Ti chiede il sì</b><span>Per le cose importanti aspetta la tua conferma. Senza risposta, non fa niente.</span></div></li>
         <li class="rivela" style="--c:var(--rosa)"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span><div><b>Ti prepara i messaggi</b><span>La chat si apre con il testo già scritto. L'invio lo fai tu.</span></div></li>
@@ -374,7 +438,7 @@
 </section>
 
 <!-- 8. Come funziona per te -->
-<section class="sezione" id="percorso" aria-labelledby="t-percorso">
+<section class="sezione" id="percorso" data-atto="galassia" aria-labelledby="t-percorso">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">Come funziona per te</span>
@@ -389,8 +453,11 @@
   </div>
 </section>
 
+<!-- Tratto di volo: dalla galassia alla plancia -->
+<section class="soglia" id="soglia-plancia" data-atto="plancia"><p class="soglia-frase">Sotto tutto questo, la plancia. Qui decidi tu.</p></section>
+
 <!-- 9. I tuoi dati restano tuoi -->
-<section class="sezione" id="dati" aria-labelledby="t-dati">
+<section class="sezione" id="dati" data-atto="plancia" data-ancora=".scudo" aria-labelledby="t-dati">
   <div class="contenitore dati-zona">
     <div class="scudo rivela" aria-hidden="true">
       <svg viewBox="0 0 400 400">
@@ -412,7 +479,7 @@
       <ul class="promesse">
         <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Niente parte senza il tuo sì</b><span>Mail, messaggi, pubblicazioni, acquisti: prepara tutto, decidi tu. Nessuna azione verso l'esterno senza conferma.</span></div></li>
         <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Lavora a casa tua</b><span>Sul tuo computer, con un archivio di note che appartiene a te.</span></div></li>
-        <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>L'account è intestato a te</b><span>Usi un tuo account di intelligenza artificiale adatto all'uso professionale. Nessun intermediario sui tuoi dati.</span></div></li>
+        <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>L'account è intestato a te</b><span>Usi un tuo account di intelligenza artificiale adatto all'uso professionale: quello che gli fai elaborare passa da quel servizio, con il tuo contratto. Nessun altro intermediario sui tuoi dati.</span></div></li>
         <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Le password le scrivi tu</b><span>Accessi, codici e carte li inserisci sempre tu. Jarvis non li scrive e non li conserva.</span></div></li>
         <li class="rivela"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Verifica prima di dire «fatto»</b><span>Può sbagliare, come chiunque. Per questo ogni lavoro si controlla con una prova prima di essere dichiarato concluso.</span></div></li>
       </ul>
@@ -421,7 +488,7 @@
 </section>
 
 <!-- Chi c'è dietro -->
-<section class="sezione" id="dietro" aria-labelledby="t-dietro">
+<section class="sezione" id="dietro" data-atto="plancia" aria-labelledby="t-dietro">
   <div class="contenitore dietro-zona">
     <figure class="ritratto senza-foto rivela">
       <!-- Nessuna foto, per scelta: resta l'iniziale. -->
@@ -433,14 +500,14 @@
       <p class="intro">Mi chiamo Manuel. Ogni Jarvis lo costruisco io, a mano, partendo dalla tua giornata. Lo installo, lo provo con te e ti seguo anche dopo: se qualcosa non va, sai a chi scrivere.</p>
       <div class="storie">
         <b>Le storie dei clienti</b>
-        <p>Le prime storie dei nostri clienti arrivano presto. Qui troverai solo racconti veri, con il loro permesso.</p>
+        <p>Per ora qui non c'è nessuna storia. Quando ci saranno, saranno solo racconti veri, con il permesso dei clienti.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- 10. Domande frequenti -->
-<section class="sezione" id="domande" aria-labelledby="t-domande">
+<section class="sezione" id="domande" data-atto="plancia" aria-labelledby="t-domande">
   <div class="contenitore">
     <div class="testa-sezione rivela">
       <span class="etichetta">Domande frequenti</span>
@@ -450,7 +517,7 @@
       <details><summary>Va bene anche per un privato, non solo per un'azienda?</summary><p>Sì. Agenda, posta, promemoria, lista della spesa, bollette ritrovate al volo, viaggi e acquisti confrontati servono a chiunque. Si costruisce attorno a quello che fai tu.</p></details>
       <details><summary>Quanto costa?</summary><p>Ogni progetto è su misura, quindi anche il preventivo. Lo ricevi in privato dopo una prima chiacchierata senza impegno.</p></details>
       <details><summary>Mi serve un computer particolare?</summary><p>Jarvis nasce sul Mac: la voce e le mani sul computer oggi lavorano lì, l'app sul telefono è per iPhone. Se usi altro, scrivilo nella richiesta e valutiamo insieme.</p></details>
-      <details><summary>Devo avere un mio account di intelligenza artificiale?</summary><p>Sì. Usi un account tuo, intestato a te e adatto all'uso professionale. Così i dati e il contratto con il servizio restano tuoi.</p></details>
+      <details><summary>Devo avere un mio account di intelligenza artificiale?</summary><p>Sì. Usi un account tuo, intestato a te e adatto all'uso professionale. Così il contratto con il servizio è tuo, e quello che gli fai elaborare passa da lì alle condizioni che hai scelto.</p></details>
       <details><summary>Può sbagliare?</summary><p>Sì, come qualsiasi collaboratore. Per questo le azioni importanti aspettano la tua conferma e ogni lavoro si verifica prima di essere dichiarato finito.</p></details>
       <details><summary>Fa le cose da solo, senza chiedermelo?</summary><p>Prepara, cerca, riassume, scrive bozze. Tutto quello che esce verso l'esterno, come una mail, un messaggio, una pubblicazione o un acquisto, parte solo con il tuo sì.</p></details>
       <details><summary>Devo saper programmare?</summary><p>No. Lo progetto, lo installo e lo configuro io. Tu gli parli come a un collaboratore.</p></details>
@@ -461,7 +528,7 @@
 </section>
 
 <!-- 11. Scrivi a Jarvis -->
-<section class="sezione" id="scrivi" aria-labelledby="t-scrivi">
+<section class="sezione" id="scrivi" data-atto="plancia" aria-labelledby="t-scrivi">
   <div class="contenitore scrivi-zona">
     <div class="rivela">
       <span class="etichetta">Scrivi a Jarvis</span>
@@ -609,6 +676,10 @@
 <script src="js/sito.js"></script>
 <script src="js/piano.js"></script>
 <script src="js/pannello.js"></script>
-<script type="module" src="js/galassia.js"></script>
+<script src="js/suono.js"></script>
+<script src="js/vivo.js"></script>
+<script src="js/studio.js"></script>
+<script src="js/scena/avvio.js"></script>
+<script src="js/costruzione/avvio.js"></script>
 </body>
 </html>

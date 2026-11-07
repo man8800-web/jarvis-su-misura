@@ -9,7 +9,7 @@ window.PROFILI = {
       ['Segreteria', 'posta', 'Smista la posta, riassume i messaggi lunghi e tiene in ordine l\'agenda.', 'separa 4 mail importanti da 20 pubblicità e prepara le risposte.'],
       ['Preventivi', 'doc', 'Dal tuo listino e da due righe di richiesta prepara il preventivo, pronto da rivedere.', 'preventivo per il signor Rossi, 6 voci, pronto in un minuto.'],
       ['Assistente clienti', 'chat', 'Scrive le risposte a mail e messaggi nel tuo stile. Le mandi tu, dopo averle lette.', '«Giovedì va benissimo, alle 10 da te.» La mando?'],
-      ['Social', 'social', 'Prepara i post e li mette in calendario dopo il tuo ok. Ai commenti semplici risponde lui.', '5 post pronti per la settimana, in attesa del tuo sì.'],
+      ['Social', 'social', 'Prepara i post e li mette in calendario dopo il tuo ok. Anche le risposte ai commenti aspettano il tuo sì.', '5 post pronti per la settimana, in attesa del tuo sì.'],
       ['Cacciaprezzi', 'prezzo', 'Confronta prodotti e prezzi prima di un acquisto. Comprare lo decidi sempre tu.', '3 lavatrici in 5 negozi, la più conveniente in cima.'],
       ['Archivio', 'archivio', 'Ritrova documenti, ricevute e bollette in un attimo.', '«La bolletta del gas di marzo?» Trovata e aperta.'],
       ['Viaggi', 'viaggio', 'Mette a confronto treni, voli e hotel. La prenotazione la confermi tu.', 'weekend a Firenze: 2 treni comodi, 3 hotel in centro.'],
@@ -32,7 +32,7 @@ window.PROFILI = {
     giornata: [
       ['08:30', 'I messaggi della notte', 'Le domande arrivate dopo la chiusura hanno già una risposta pronta.', [['k', '> messaggi'], ['', '6 domande su orari e taglie'], ['ok', '6 risposte da rileggere']]],
       ['10:00', 'Il prodotto nuovo, sui social', 'Foto, testo e orario di uscita pronti. Esce dopo il tuo ok.', [['k', '> post'], ['', 'nuovi arrivi, uscita alle 18'], ['ok', 'in attesa del tuo sì']]],
-      ['13:00', 'I commenti semplici', 'Ringraziamenti e domande facili trovano risposta. Quelli delicati li lascia a te.', [['k', '> commenti'], ['ok', '12 risposte semplici'], ['fa', '1 da vedere tu']]],
+      ['13:00', 'I commenti semplici', 'Ringraziamenti e domande facili hanno già la risposta pronta: escono col tuo ok. Quelli delicati li lascia a te.', [['k', '> commenti'], ['ok', '12 risposte pronte da approvare'], ['fa', '1 da vedere tu']]],
       ['15:30', 'Cosa sta finendo', 'Ti dice cosa manca in negozio e prepara l\'ordine al fornitore. Lo confermi tu.', [['k', '> magazzino'], ['', '8 articoli quasi finiti'], ['ok', 'ordine pronto da confermare']]],
       ['19:30', 'L\'offerta del weekend', 'Testo, post e messaggio per i clienti affezionati, pronti per domani.', [['k', '> offerta weekend'], ['ok', 'pronta da approvare']]]
     ]
@@ -40,11 +40,11 @@ window.PROFILI = {
   barbiere: {
     nome: 'Barbiere ed estetista', colore: '#5ad7ff', forma: 'forbici',
     frase: 'Per parrucchieri, barbieri ed estetiste: l\'agenda piena e le mani libere.',
-    esempi: ['Prenotazioni prese e confermate senza alzare il telefono', 'Promemoria ai clienti il giorno prima', 'Buchi in agenda riempiti con chi aspettava'],
+    esempi: ['Prenotazioni raccolte, confermi con un sì senza alzare il telefono', 'Promemoria per i clienti pronti il giorno prima', 'Buchi in agenda: messaggio pronto per chi aspettava'],
     squadra: [
       ['Prenotazioni', 'agenda', 'Raccoglie le richieste e propone gli orari liberi. Le conferme le approvi tu.', '«Sabato alle 11 è libero, la segno?»'],
-      ['Promemoria', 'campana', 'Ricorda l\'appuntamento ai clienti il giorno prima.', '14 promemoria per domani, pronti da mandare.'],
-      ['Riempi-buchi', 'chat', 'Quando qualcuno disdice, avvisa chi aspettava un posto.', 'disdetta delle 16: proposto il posto a 2 clienti in attesa.'],
+      ['Promemoria', 'campana', 'Prepara il promemoria del giorno prima per ogni cliente. Parte col tuo ok.', '14 promemoria per domani, pronti da mandare.'],
+      ['Riempi-buchi', 'chat', 'Quando qualcuno disdice, prepara il messaggio per chi aspettava un posto. Lo mandi tu.', 'disdetta delle 16: messaggio pronto per 2 clienti in attesa.'],
       ['Recensioni', 'stella', 'Prepara le risposte alle recensioni, belle e meno belle. Le pubblichi tu.', '«Grazie Laura, ti aspettiamo per il prossimo taglio!»'],
       ['Social', 'social', 'Prepara i post dei lavori del giorno e li programma dopo il tuo ok.', 'prima e dopo di oggi: post pronto.'],
       ['Revisore', 'scudo', 'Ricontrolla orari e messaggi prima che escano.', 'due appuntamenti sovrapposti: segnalato.']
@@ -52,9 +52,9 @@ window.PROFILI = {
     giornata: [
       ['08:00', 'L\'agenda del giorno', 'Chi arriva, a che ora e per cosa, prima di aprire.', [['k', '> oggi'], ['', '11 appuntamenti'], ['ok', 'un buco alle 15']]],
       ['09:30', 'Le prenotazioni arrivate', 'Le richieste della notte hanno già un orario proposto.', [['k', '> prenotazioni'], ['', '4 richieste'], ['ok', '4 orari proposti']]],
-      ['12:00', 'Il buco delle 15, riempito', 'Una cliente ha disdetto: chi aspettava un posto viene avvisato.', [['k', '> disdetta'], ['ok', 'posto proposto a 2 clienti']]],
+      ['12:00', 'Il buco delle 15, da riempire', 'Una cliente ha disdetto: il messaggio per chi aspettava un posto è pronto. Lo mandi tu.', [['k', '> disdetta'], ['ok', 'messaggio pronto per 2 clienti']]],
       ['17:00', 'Recensioni e social', 'Risposte alle recensioni e il post del giorno, pronti per il tuo ok.', [['k', '> recensioni'], ['ok', '3 risposte pronte']]],
-      ['19:30', 'I promemoria di domani', 'Ogni cliente di domani riceve il suo promemoria.', [['k', '> promemoria'], ['ok', '12 pronti da mandare']]]
+      ['19:30', 'I promemoria di domani', 'Il promemoria per ogni cliente di domani è pronto: parte col tuo ok.', [['k', '> promemoria'], ['ok', '12 pronti da mandare']]]
     ]
   },
   legale: {
@@ -66,7 +66,7 @@ window.PROFILI = {
       ['Posta dello studio', 'posta', 'Smista la posta, mette in cima le urgenze e prepara le risposte di routine.', '15 mail, 2 urgenti in cima.'],
       ['Fascicoli', 'archivio', 'Ritrova atti e documenti dei fascicoli in un attimo.', '«La memoria Verdi di marzo?» Trovata.'],
       ['Bozze', 'doc', 'Prepara bozze di lettere e atti dai tuoi modelli. Le rivede e le firma sempre l\'avvocato.', 'lettera di diffida in bozza, da rivedere.'],
-      ['Segreteria clienti', 'chat', 'Risponde alle domande pratiche: appuntamenti, documenti da portare.', '«Porti il contratto e la corrispondenza.»'],
+      ['Segreteria clienti', 'chat', 'Prepara le risposte alle domande pratiche: appuntamenti, documenti da portare.', '«Porti il contratto e la corrispondenza.» La mando?'],
       ['Revisore', 'scudo', 'Ricontrolla date, nomi e riferimenti prima che una bozza arrivi a te.', 'nome della controparte scritto male: corretto.']
     ],
     giornata: [
@@ -80,12 +80,12 @@ window.PROFILI = {
   ristorante: {
     nome: 'Ristorante e bar', colore: '#ff9f43', forma: 'posate',
     frase: 'Per chi sta tra cucina e sala: prenotazioni, menu e recensioni in ordine.',
-    esempi: ['Prenotazioni raccolte e confermate', 'Menu del giorno pronto per i social', 'Risposte alle recensioni, pubblichi tu'],
+    esempi: ['Prenotazioni raccolte, le confermi tu', 'Menu del giorno pronto per i social', 'Risposte alle recensioni, pubblichi tu'],
     squadra: [
       ['Prenotazioni', 'agenda', 'Raccoglie le richieste e ti dice quanti coperti hai. Le conferme le approvi tu.', 'sabato sera: 42 coperti, 2 tavoli liberi.'],
       ['Menu e social', 'social', 'Prepara il post del menu del giorno e lo programma dopo il tuo ok.', 'menu del giorno: post pronto per le 11.'],
       ['Recensioni', 'stella', 'Prepara risposte gentili alle recensioni, anche a quelle storte. Le pubblichi tu.', '«Grazie della segnalazione, ci rivediamo presto.»'],
-      ['Assistente clienti', 'chat', 'Risponde a domande su orari, allergeni dichiarati nel menu, parcheggio.', '«Sì, abbiamo il menu senza glutine.»'],
+      ['Assistente clienti', 'chat', 'Prepara le risposte a domande su orari, allergeni dichiarati nel menu, parcheggio.', '«Sì, abbiamo il menu senza glutine.» La mando?'],
       ['Ordini', 'carrello', 'Prepara la lista per i fornitori. Ordini tu.', 'ordine della verdura pronto per domattina.'],
       ['Revisore', 'scudo', 'Ricontrolla menu, prezzi e orari prima che escano.', 'prezzo del dolce diverso dal menu: segnalato.']
     ],
@@ -102,10 +102,10 @@ window.PROFILI = {
     frase: 'Per commercialisti, tecnici e studi medici: agenda, documenti e clienti in ordine.',
     esempi: ['Appuntamenti incastrati senza sovrapposizioni', 'Documenti dei clienti ritrovati in un attimo', 'Promemoria e risposte di routine già pronte'],
     squadra: [
-      ['Agenda', 'agenda', 'Incastra gli appuntamenti e manda i promemoria il giorno prima.', 'tre orari liberi giovedì per il nuovo cliente.'],
+      ['Agenda', 'agenda', 'Incastra gli appuntamenti e prepara i promemoria del giorno prima.', 'tre orari liberi giovedì per il nuovo cliente.'],
       ['Segreteria', 'posta', 'Smista le mail e prepara le risposte di routine.', '12 mail, 3 urgenti in cima, 5 risposte pronte.'],
       ['Documenti', 'archivio', 'Ritrova pratiche e documenti dei clienti al volo.', '«La pratica Neri del 2024?» Trovata.'],
-      ['Richieste dei clienti', 'chat', 'Risponde alle domande pratiche: documenti da portare, orari, indirizzo.', '«Porti la carta d\'identità e l\'ultimo modello.»'],
+      ['Richieste dei clienti', 'chat', 'Prepara le risposte alle domande pratiche: documenti da portare, orari, indirizzo.', '«Porti la carta d\'identità e l\'ultimo modello.» La mando?'],
       ['Scadenze', 'campana', 'Ti avvisa delle scadenze dei clienti in tempo.', '5 scadenze questa settimana.'],
       ['Revisore', 'scudo', 'Ricontrolla ogni bozza prima che arrivi a te.', 'data sbagliata nella lettera: corretta.']
     ],
@@ -114,7 +114,7 @@ window.PROFILI = {
       ['09:00', 'La posta dei clienti', 'Le urgenze in cima, le risposte di routine già scritte.', [['k', '> posta'], ['', '12 nuove, 3 urgenti'], ['ok', '5 risposte pronte']]],
       ['12:30', 'Un incastro in agenda', 'Un cliente chiede un appuntamento: tre orari liberi proposti.', [['k', '> appuntamento'], ['ok', '3 orari proposti']]],
       ['16:00', 'La pratica giusta', '«La pratica Neri.» Aperta, senza cercare tra le cartelle.', [['k', '> pratica Neri'], ['ok', 'trovata e aperta']]],
-      ['18:30', 'I promemoria di domani', 'Ogni cliente di domani riceve il suo promemoria.', [['k', '> promemoria'], ['ok', '6 pronti da mandare']]]
+      ['18:30', 'I promemoria di domani', 'Il promemoria per ogni cliente di domani è pronto: parte col tuo ok.', [['k', '> promemoria'], ['ok', '6 pronti da mandare']]]
     ]
   },
   artigiano: {

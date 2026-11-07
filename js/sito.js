@@ -56,6 +56,7 @@
     var max = document.documentElement.scrollHeight - innerHeight;
     if (barra) barra.style.transform = 'scaleX(' + (max > 0 ? clamp(y / max, 0, 1) : 0) + ')';
     if (testata) testata.classList.toggle('piena', y > 40);
+    document.body.classList.toggle('in-cima', y < 120);
     if (linea) {
       var r = linea.getBoundingClientRect();
       linea.style.setProperty('--p', clamp((innerHeight * .65 - r.top) / Math.max(r.height, 1), 0, 1).toFixed(3));
@@ -119,7 +120,12 @@
     audio.addEventListener('error', function () {
       btn.disabled = true; pos.disabled = true; if (avviso) avviso.hidden = false; if (stato) stato.textContent = 'Non disponibile';
     });
-    audio.src = src; audio.load();
+    // il file si chiede solo quando il lettore si avvicina allo schermo: chi non ci arriva non scarica niente
+    function caricaVoce() { if (!audio.getAttribute('src')) { audio.preload = 'metadata'; audio.src = src; } }
+    if ('IntersectionObserver' in window) {
+      var ioVoce = new IntersectionObserver(function (v) { if (v[0].isIntersecting) { caricaVoce(); ioVoce.disconnect(); } }, { rootMargin: '300px 0px' });
+      ioVoce.observe(btn);
+    } else caricaVoce();
     audio.addEventListener('loadedmetadata', function () { tTot.textContent = fmt(audio.duration); disegna(0); });
     audio.addEventListener('timeupdate', function () {
       tOra.textContent = fmt(audio.currentTime);
@@ -129,6 +135,7 @@
     audio.addEventListener('ended', function () { fermaTutto(); if (stato) stato.textContent = 'Finito'; audio.currentTime = 0; });
     btn.addEventListener('click', function () {
       if (audio.paused) {
+        caricaVoce();
         var p = audio.play();
         if (p && p.catch) p.catch(function () { fermaTutto(); if (stato) stato.textContent = 'Non riesco a riprodurre'; });
         suona = true; btn.setAttribute('aria-pressed', 'true'); btn.setAttribute('aria-label', 'Metti in pausa'); if (stato) stato.textContent = 'In riproduzione';
@@ -143,7 +150,7 @@
   /* ---------- la forma del profilo (particelle che si trasformano) ---------- */
   var Forma = (function () {
     var tela = $('#forma'); if (!tela) return { vai: function () {} };
-    var ctx = tela.getContext('2d'), N = 460, ps = [], colore = '#5ad7ff', visibile = true, t0 = performance.now();
+    var ctx = tela.getContext('2d'), N0 = 460, N = N0, ps = [], colore = '#5ad7ff', visibile = true, t0 = performance.now();
     function cerchio(cx, cy, r, a0, a1, passi) {
       var out = [], i; a0 = a0 == null ? 0 : a0; a1 = a1 == null ? Math.PI * 2 : a1; passi = passi || 48;
       for (i = 0; i <= passi; i++) { var a = a0 + (a1 - a0) * i / passi; out.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); }
@@ -159,8 +166,8 @@
       chiave: function () { return [cerchio(-.5, -.45, .36), cerchio(-.5, -.45, .14, 0, 6.283, 14), [[-.26, -.2], [.72, .78]], [[-.14, -.32], [.84, .66]], [[.72, .78], [.84, .66]], [[.45, .51], [.6, .36]], [[.6, .66], [.72, .54]]]; },
       casa: function () { return [[[-.85, .1], [0, -.72], [.85, .1]], [[-.62, .1], [-.62, .85], [.62, .85], [.62, .1]], [[-.16, .85], [-.16, .3], [.16, .3], [.16, .85]], [[.4, -.26], [.4, -.72], [.62, -.72], [.62, -.1]]]; }
     };
-    function campiona(tracciati) {
-      var lung = [], tot = 0;
+    function campiona(tracciati, quanti) {
+      var N = quanti || N0, lung = [], tot = 0;
       tracciati.forEach(function (p) { var l = 0; for (var i = 1; i < p.length; i++) l += Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]); lung.push(l); tot += l; });
       var out = [];
       tracciati.forEach(function (p, k) {
@@ -201,11 +208,13 @@
       }
       ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
     }
-    function giro(ora) { if (visibile && !document.hidden) disegna(ora - t0); if (!ridotto) requestAnimationFrame(giro); }
+    // con la scena 3D attiva la forma la disegna il nucleo: il canvas 2D resta fermo
+    function giro(ora) { if (visibile && !document.hidden && !document.body.classList.contains('con-3d')) disegna(ora - t0); if (!ridotto) requestAnimationFrame(giro); }
     if ('IntersectionObserver' in window) new IntersectionObserver(function (v) { visibile = v[0].isIntersecting; }, { threshold: 0 }).observe(tela);
     if (!ridotto) requestAnimationFrame(giro);
     addEventListener('resize', function () { if (ridotto) disegna(0); });
-    return { vai: vai };
+    function punti(chiave, quanti) { return campiona((FORME[chiave] || FORME.anello)(), quanti); }
+    return { vai: vai, punti: punti };
   })();
 
   /* ---------- la squadra d'esempio (orbita) ---------- */
@@ -291,6 +300,9 @@
     }
     box.addEventListener('pointerenter', function () { sopra = true; });
     box.addEventListener('pointerleave', function () { sopra = false; trascina = false; box.classList.remove('presa'); });
+    // col fuoco da tastiera l'orbita si ferma: un pulsante non scappa mentre lo si sta per premere
+    box.addEventListener('focusin', function () { sopra = true; });
+    box.addEventListener('focusout', function () { sopra = false; });
     box.addEventListener('pointerdown', function (e) { if (e.target.closest('.reparto')) return; trascina = true; ultimoX = e.clientX; box.classList.add('presa'); });
     addEventListener('pointerup', function () { trascina = false; box.classList.remove('presa'); });
     addEventListener('pointermove', function (e) { if (!trascina) return; var dx = e.clientX - ultimoX; ultimoX = e.clientX; vel = dx * .0035; });
@@ -327,7 +339,9 @@
     aggiornaScroll();
   }
   function scegliProfilo(chiave, scorri) {
-    var p = PROFILI[chiave]; if (!p) return false;
+    // solo le chiavi scritte in profili.js (?profilo=__proto__ o constructor non devono rompere la pagina)
+    if (!Object.prototype.hasOwnProperty.call(PROFILI, chiave)) return false;
+    var p = PROFILI[chiave];
     profiloAttuale = chiave;
     document.documentElement.style.setProperty('--pc', p.colore);
     $$('.profilo', boxProfili).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-chiave') === chiave ? 'true' : 'false'); });
@@ -339,6 +353,7 @@
     aggiornaGiornata(p);
     Orbita.imposta(p.squadra);
     if (scorri) { var z = $('#trasforma .forma-zona'); if (z && z.scrollIntoView) z.scrollIntoView({ behavior: ridotto ? 'auto' : 'smooth', block: 'center' }); }
+    document.dispatchEvent(new CustomEvent('profilo-cambiato', { detail: { chiave: chiave, colore: p.colore, forma: p.forma } }));
     return true;
   }
   if (boxProfili) {
@@ -350,7 +365,7 @@
     });
     var da = '';
     try { da = new URLSearchParams(location.search).get('profilo') || ''; } catch (e) { da = ''; }
-    scegliProfilo(PROFILI[da] ? da : 'tutti', false);
+    if (!scegliProfilo(da, false)) scegliProfilo('tutti', false);
   }
 
   /* ---------- interfaccia per gli altri script ---------- */
@@ -358,6 +373,7 @@
     profili: PROFILI,
     scegliProfilo: scegliProfilo,
     profiloAttuale: function () { return profiloAttuale; },
+    puntiForma: Forma.punti || function () { return []; },
     tourSquadra: Orbita.tour,
     tourAttivo: Orbita.tourAttivo
   };

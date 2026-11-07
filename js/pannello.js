@@ -12,7 +12,7 @@
 
   /* ---------- WhatsApp (compare solo se il numero è in config.js) ---------- */
   (function () {
-    var a = $('#whatsapp'), n = (CFG.whatsappNumero || '').replace(/\D/g, '');
+    var a = $('#pulsante-whatsapp'), n = (CFG.whatsappNumero || '').replace(/\D/g, '');
     if (!a || n.length < 8 || n.length > 15) return;
     a.href = 'https://wa.me/' + n + '?text=' + encodeURIComponent('Ciao Manuel, ho visto il sito di Jarvis su misura e vorrei parlarne.');
     a.hidden = false;
@@ -88,7 +88,7 @@
   if (haAudio) audioCom.addEventListener('ended', fermaCommento);
 
   function blocca(si) {
-    ['main', '.piede', '#testata', '#whatsapp'].forEach(function (s) {
+    ['main', '.piede', '#testata', '#pulsante-whatsapp'].forEach(function (s) {
       var e = $(s); if (!e) return;
       if (si) e.setAttribute('inert', ''); else e.removeAttribute('inert');
     });
@@ -142,7 +142,7 @@
   /* ---------- tasto Esc ---------- */
   addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
-    if (!pan.mani.hidden || !pan.piano.hidden) { chiudiPannelli(); return; }
+    if (!pan.mani.hidden || !pan.piano.hidden) { var torna = !pan.mani.hidden ? cmd.mani : cmd.piano; chiudiPannelli(); torna.focus({ preventScroll: true }); return; }
     if (inEsplora) esciEsplora();
   });
 

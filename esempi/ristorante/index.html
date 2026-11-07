@@ -88,7 +88,7 @@ p.int{color:var(--te);margin:0 0 20px}
 .rv.vis .scad div{opacity:1;transform:none}.rv.vis .scad div:nth-child(2){transition-delay:.15s}.rv.vis .scad div:nth-child(3){transition-delay:.3s}.rv.vis .scad div:nth-child(4){transition-delay:.45s}
 .scad b{flex:0 0 64px;text-align:center;font-family:Georgia,serif;font-size:20px;color:#fff;background:var(--ve);border-radius:12px;padding:8px 0}
 .ritorno{display:inline-block;margin:0 0 6px;font-size:14px;color:var(--ve);text-decoration:none;font-weight:600}
-.colonna{display:none}</style></head><body><main>
+.colonna{display:none}</style><noscript><style>.rv,.m,.scad div{opacity:1;transform:none}.scrive{display:none}</style></noscript></head><body><main>
 
 <header class="hero">
 <svg class="colonna" viewBox="0 0 170 520" aria-hidden="true">
@@ -97,15 +97,15 @@ p.int{color:var(--te);margin:0 0 20px}
 <g id="vert"></g>
 </svg>
 <a class="ritorno" href="/#esempi">← Jarvis su misura</a><span class="eti">ESEMPIO · RISTORANTE E TRATTORIA</span>
-<h1>Un ristorante. <b>La sala piena, il telefono che non squilla durante il servizio.</b></h1>
+<h1>Un ristorante. <b>Le prenotazioni in ordine, le risposte pronte tra un servizio e l'altro.</b></h1>
 <p>Ecco come lavorerebbe Jarvis in un ristorante, una trattoria o una pizzeria. È un esempio: nomi, orari e numeri sono inventati.</p>
 <div class="scendi"><i></i>SCORRI</div>
 </header>
 
 <section class="rv"><span class="num">01</span>
-<h2>Il paziente scrive, la risposta arriva subito</h2>
-<p class="int">Anche quando sei impegnato, o è domenica sera.</p>
-<div class="tel" id="chat1"><div class="top"><span>P</span><div>Trattoria Il Portico<small>in linea</small></div></div>
+<h2>Il cliente scrive, la risposta è già pronta</h2>
+<p class="int">Jarvis la prepara anche quando sei impegnato, o è domenica sera. Tu la approvi dal telefono e parte.</p>
+<div class="tel" id="chat1"><div class="top"><span>P</span><div>Trattoria Il Portico<small>risposte preparate, le approvi tu</small></div></div>
 <div class="m lui">Ciao, avete un tavolo per 4 stasera verso le 21?<span class="ora">21:14</span></div>
 <div class="scrive"><b></b><b></b><b></b></div>
 <div class="m io">Ciao! Sono l'assistente della Trattoria Il Portico. Alle 21 ho un tavolo per 4 in veranda. Lo blocco a nome di chi?<span class="ora">21:14</span></div>
@@ -115,27 +115,27 @@ p.int{color:var(--te);margin:0 0 20px}
 </div></section>
 
 <section class="rv"><span class="num">02</span>
-<h2>L'agenda si tiene in ordine da sola</h2>
-<p class="int">Prenotazioni, spostamenti e disdette: i buchi si riempiono dalla lista d'attesa.</p>
+<h2>L'agenda sempre in ordine</h2>
+<p class="int">Prenotazioni, spostamenti e disdette in un posto solo. Quando si libera un tavolo, ti propone chi era in lista d'attesa: confermi tu.</p>
 <div class="ag" id="ag">
 <div class="r"><span class="h">19:30</span><span>Tavolo 2 · compleanno, torta già ordinata</span></div>
 <div class="r"><span class="h">20:00</span><span>Tavolo 6 · prenotato su Instagram</span></div>
-<div class="r"><span class="h">20:30</span><span>Tavolo 4 · disdetto, <span class="si">riassegnato dalla lista d'attesa</span></span></div>
+<div class="r"><span class="h">20:30</span><span>Tavolo 4 · disdetto, <span class="si">proposto a chi era in lista d'attesa</span></span></div>
 <div class="r"><span class="h">21:00</span><span>Veranda · Giulia, 4 persone, senza glutine</span></div>
 </div></section>
 
 <section class="rv"><span class="num">03</span>
-<h2>Meno sedute saltate</h2>
-<div class="tel" id="chat2"><div class="top"><span>P</span><div>Trattoria Il Portico<small>promemoria automatico</small></div></div>
+<h2>Il promemoria prima del tavolo</h2>
+<div class="tel" id="chat2"><div class="top"><span>P</span><div>Trattoria Il Portico<small>promemoria, parte col tuo ok</small></div></div>
 <div class="m io">Ciao Giulia! Ti aspettiamo stasera alle 21 alla Trattoria Il Portico. Rispondi OK per confermare o SPOSTA se cambia qualcosa.<span class="ora">10:00</span></div>
 <div class="m lui">OK, a stasera!<span class="ora">10:12</span></div>
 </div></section>
 
 <section class="rv"><span class="num">04</span>
-<h2>La sala piena anche il martedì</h2>
-<p class="int">Jarvis vede i giorni vuoti e propone ai clienti abituali il piatto o la serata giusta.</p>
-<div class="barre" id="barre"><div><i style="--h:35%"></i><small>LUN</small></div><div><i style="--h:62%"></i><small>MAR</small></div><div><i style="--h:58%"></i><small>MER</small></div><div><i style="--h:74%"></i><small>GIO</small></div><div><i style="--h:96%"></i><small>VEN</small></div><div><i style="--h:100%"></i><small>SAB</small></div><div><i style="--h:88%"></i><small>DOM</small></div></div>
-<p class="int" style="margin-top:12px">Esempio: il martedì, il giorno più vuoto, Jarvis manda ai clienti abituali la proposta della settimana. Il tavolo si prenota rispondendo al messaggio.</p>
+<h2>Il giorno vuoto, con una proposta pronta</h2>
+<p class="int">Jarvis guarda i giorni più vuoti e prepara per i clienti abituali il piatto o la serata giusta.</p>
+<div class="barre" id="barre"><div><i style="--h:62%"></i><small>LUN</small></div><div><i style="--h:35%"></i><small>MAR</small></div><div><i style="--h:58%"></i><small>MER</small></div><div><i style="--h:74%"></i><small>GIO</small></div><div><i style="--h:96%"></i><small>VEN</small></div><div><i style="--h:100%"></i><small>SAB</small></div><div><i style="--h:88%"></i><small>DOM</small></div></div>
+<p class="int" style="margin-top:12px">Esempio: il martedì è il giorno più vuoto, così Jarvis prepara per i clienti abituali la proposta della settimana. Parte col tuo ok, solo a chi ha dato il consenso, e il tavolo si prenota rispondendo al messaggio.</p>
 </section>
 
 <section class="rv"><span class="num">05</span>
@@ -149,16 +149,16 @@ p.int{color:var(--te);margin:0 0 20px}
 
 <section class="rv"><span class="num">06</span>
 <h2>I clienti di una volta, richiamati al momento giusto</h2>
-<p class="int">Esempio di un messaggio che parte da solo, al momento giusto, e della risposta.</p>
-<div class="tel" id="chat3"><div class="top"><span>P</span><div>Trattoria Il Portico<small>messaggio automatico</small></div></div>
+<p class="int">Esempio di un messaggio preparato da Jarvis: parte col tuo ok, solo a chi ha dato il consenso. Sotto, la risposta.</p>
+<div class="tel" id="chat3"><div class="top"><span>P</span><div>Trattoria Il Portico<small>messaggio in bozza, parte col tuo ok</small></div></div>
 <div class="m io">Ciao Marco! È un po' che non passi: questa settimana c'è il menù d'autunno. Ti tengo un tavolo per venerdì?<span class="ora">11:00</span></div>
 <div class="m lui">Dai, venerdì alle 20 per 2!<span class="ora">11:40</span></div>
 </div></section>
 
 <section class="rv"><span class="num">07</span>
 <h2>I numeri, in parole semplici</h2>
-<p class="int">Ogni mese un riepilogo: cosa funziona e quanto rende quello che si spende. Esempio:</p>
-<div class="kpi" id="kpi"><div><b data-v="18" data-p="+" data-s="">0</b><small>coperti a settimana</small></div><div><b data-v="70" data-p="−" data-s="%">0</b><small>telefonate in servizio</small></div><div><b data-v="14" data-p="" data-s="">0</b><small>recensioni nuove</small></div></div>
+<p class="int">Ogni mese un riepilogo di quello che è stato fatto. Numeri di fantasia: non sono risultati di clienti.</p>
+<div class="kpi" id="kpi"><div><b data-v="120" data-p="" data-s="">0</b><small>prenotazioni raccolte</small></div><div><b data-v="64" data-p="" data-s="">0</b><small>risposte preparate</small></div><div><b data-v="12" data-p="" data-s="">0</b><small>post pronti</small></div></div>
 </section>
 
 <section class="rv">
